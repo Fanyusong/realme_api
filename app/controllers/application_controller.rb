@@ -1,7 +1,23 @@
 class ApplicationController < ActionController::API
-  before_action :authorize_request, except: [:register, :login]
+  before_action :authorize_request, except: [:register, :sign_in, :home, :route_not_found]
   attr_reader :current_user
   include ExceptionHandler
+
+  def home
+    render json: {
+        data: {
+            message: 'Home'
+        }
+    }
+  end
+
+  def route_not_found
+    render json: {
+        data: {
+            message: 'Route not found'
+        }
+    }, status: 404
+  end
 
   def register
     user = User.new(user_params)
@@ -11,7 +27,7 @@ class ApplicationController < ActionController::API
           data: {
               status: true,
               data: {
-                  token: auth_token
+                  token: auth_token.result
               }
           }
       }
@@ -27,12 +43,9 @@ class ApplicationController < ActionController::API
   def sign_in
     auth_token = AuthenticateUser.new(auth_params[:login]).call
     render json: {
-        data: {
-            status: true,
-            data: {
-                token: auth_token
-            }
-        }
+      data: {
+          token: auth_token.result
+      }
     }
   end
 
@@ -51,6 +64,39 @@ class ApplicationController < ActionController::API
           }
       }, status: 422
     end
+  end
+
+  def receive_email
+    unless @current_user.email.blank?
+      @current_user.update(is_received_email: receive_mail_params[:is_received_email])
+      render json: {
+          data: {
+              message: 'Update status of receive email success'
+          }
+      }
+    else
+      render json: {
+          data: {
+              message: 'Please update your email'
+          }
+      }, status: 422
+    end
+  end
+
+  def profile
+    render json: {
+        data: {
+            email: @current_user&.email,
+            phone_number: @current_user&.phone_number,
+            game_1: @current_user.game_1,
+            game_2: @current_user.game_2,
+            game_3: @current_user.game_3,
+            game_4: @current_user.game_4,
+            game_5: @current_user.game_5,
+            game_6: @current_user.game_6,
+            is_received_email: @current_user.is_received_email
+        }
+    }
   end
 
   private
@@ -72,7 +118,8 @@ class ApplicationController < ActionController::API
   end
 
   def authorize_request
-    @current_user = (AuthorizeApiRequest.new(request.headers).call)[:user]
+    @current_user = AuthorizeApiRequest.new(request.headers).call.result
+    render json: { message: 'Not Authorized' }, status: 401 unless @current_user
   end
 
 end

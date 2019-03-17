@@ -3,4 +3,9 @@ Rails.application.routes.draw do
   post 'register', to: 'application#register'
   post 'sign_in', to: 'application#sign_in'
   post 'update_game_score', to: 'application#update_game_score'
+  post 'receive_email', to: 'application#receive_email'
+  get 'profile', to: 'application#profile'
+
+  root to: "application#home"
+  match '*unmatched', to: 'application#route_not_found', via: :all
 end

@@ -1,12 +1,12 @@
 class AuthorizeApiRequest
+  prepend SimpleCommand
+
   def initialize(headers = {})
     @headers = headers
   end
 
   def call
-    {
-        user: user
-    }
+    user
   end
 
   private

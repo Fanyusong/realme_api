@@ -1,4 +1,6 @@
 class AuthenticateUser
+  prepend SimpleCommand
+
   def initialize(login)
     @login = login
   end
@@ -9,10 +11,10 @@ class AuthenticateUser
 
   private
 
-  attr_reader :login
+  attr_accessor :login
 
   def user
-    user = User.where(email: login).or(User.where(phone_number: login))
+    user = User.where(email: login).or(User.where(phone_number: login))&.first
     return user if user
     raise(ExceptionHandler::AuthenticationError, Message.invalid_credentials)
   end
