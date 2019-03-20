@@ -1,0 +1,1 @@
+server ENV['REALME_API_SERVER'], port: 22, roles: [:web, :app, :db], primary: true
