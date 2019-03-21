@@ -73,7 +73,7 @@ namespace :deploy do
   desc 'Nginx'
   task :nginx do
     on roles(:all) do
-      execute "sudo ln -nfs /var/www/realme_api_app/shared/config/nginx.conf /etc/nginx/sites-enabled/realme_api_app"
+      execute "sudo ln -nfs /var/www/realme_api/shared/config/nginx.conf /etc/nginx/sites-enabled/realme_api"
       execute "sudo service nginx restart"
     end
   end
