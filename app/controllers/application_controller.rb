@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::API
-  before_action :authorize_request, except: [:register, :sign_in, :home, :route_not_found]
+  before_action :authorize_request, except: [:register, :sign_in, :home, :route_not_found, :number_of_users]
   attr_reader :current_user
   include ExceptionHandler
 
@@ -92,6 +92,15 @@ class ApplicationController < ActionController::API
             game_5: @current_user.game_5,
             game_6: @current_user.game_6,
             is_received_email: @current_user.is_received_email
+        }
+    }
+  end
+
+  def number_of_users
+    number = User.count
+    render json: {
+        data: {
+            number: number
         }
     }
   end
