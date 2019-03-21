@@ -26,9 +26,7 @@ class ApplicationController < ActionController::API
       render json: {
           data: {
               status: true,
-              data: {
-                  token: auth_token.result
-              }
+              token: auth_token.result
           }
       }
     else
