@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_15_094511) do
+ActiveRecord::Schema.define(version: 2019_03_22_160601) do
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "email"
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 2019_03_15_094511) do
     t.boolean "game_3", default: false
     t.boolean "game_4", default: false
     t.boolean "game_5", default: false
-    t.boolean "game_6", default: false
+    t.string "game_6", default: ""
     t.boolean "is_received_email", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
