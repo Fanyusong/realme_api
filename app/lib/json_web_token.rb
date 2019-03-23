@@ -13,5 +13,7 @@ class JsonWebToken
     HashWithIndifferentAccess.new body
   rescue JWT::ExpiredSignature, JWT::VerificationError => e
     raise ExceptionHandler::ExpiredSignature, e.message
+  rescue StandardError => e
+    return nil
   end
 end

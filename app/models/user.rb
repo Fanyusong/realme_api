@@ -44,7 +44,10 @@ class User < ApplicationRecord
 
   def format_vn_phone_number
     unless self.phone_number.blank?
-      if !DAUSO_VIETNAM.include? self.phone_number[0,2] || self.phone_number.length != 10
+      if !DAUSO_VIETNAM.include? self.phone_number[0,2]
+        errors.add :phone_number, 'is not correct'
+      end
+      if self.phone_number.length != 10
         errors.add :phone_number, 'is not correct'
       end
     end
