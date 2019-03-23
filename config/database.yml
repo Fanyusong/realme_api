@@ -24,7 +24,7 @@ staging:
 
 production:
   <<: *default
-  database: realme_api_staging
+  database: realme_api_production
   username: <%= ENV['REALME_API_DATABASE_USERNAME'] %>
   password: <%= ENV['REALME_API_DATABASE_PASSWORD'] %>
   host: <%= ENV['REALME_API_DATABASE_HOST'] %>
