@@ -108,7 +108,7 @@ class ApplicationController < ActionController::API
   private
 
   def user_params
-    params.permit(:email, :phone_number, :address, :name)
+    params.permit(:email, :phone_number, :address, :name, :is_received_email)
   end
 
   def game_score_params

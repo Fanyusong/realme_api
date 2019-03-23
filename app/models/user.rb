@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  validates :email, uniqueness: true, format: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, unless: Proc.new { |record| record.email.blank? }
+  validates :email, uniqueness: true, format: URI::MailTo::EMAIL_REGEXP, unless: Proc.new { |record| record.email.blank? }
   validates :phone_number, uniqueness: true, unless: Proc.new { |record| record.phone_number.blank? }
   validate :existence_of_email_or_phone_number, on: :create
   validate :format_vn_phone_number
