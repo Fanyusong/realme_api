@@ -1,8 +1,8 @@
 class User < ApplicationRecord
   validates :email, uniqueness: true, format: URI::MailTo::EMAIL_REGEXP, unless: Proc.new { |record| record.email.blank? }
-  validates :phone_number, uniqueness: true, unless: Proc.new { |record| record.phone_number.blank? }
-  validate :existence_of_email_or_phone_number, on: :create
+  validates :phone_number, presence: true, uniqueness: true
   validate :format_vn_phone_number
+  validates_presence_of  :name
   validates_format_of :name, :with => /\A[^0-9`!@#\$%\^&*+_=]+\z/, allow_nil: true
 
   DAUSO_VIETNAM = %w(03 05 07 08 09)
@@ -51,9 +51,5 @@ class User < ApplicationRecord
         errors.add :phone_number, 'is not correct'
       end
     end
-  end
-
-  def existence_of_email_or_phone_number
-    errors.add :email_or_phone_number, 'is required' if self.email.blank? && self.phone_number.blank?
   end
 end

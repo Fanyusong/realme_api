@@ -85,6 +85,7 @@ class ApplicationController < ActionController::API
         data: {
             email: @current_user&.email,
             phone_number: @current_user&.phone_number,
+            name: @current_user&.name,
             game_1: @current_user.game_1,
             game_2: @current_user.game_2,
             game_3: @current_user.game_3,
