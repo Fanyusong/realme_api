@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  before_save :set_default_email
   validates :email, uniqueness: true, format: URI::MailTo::EMAIL_REGEXP, unless: Proc.new { |record| record.email.blank? }
   validates :phone_number, presence: true, uniqueness: true
   validate :format_vn_phone_number
@@ -40,6 +41,12 @@ class User < ApplicationRecord
   end
 
   private
+
+  def set_default_email
+    if self.email == ''
+      self.email = nil
+    end
+  end
 
   def format_vn_phone_number
     unless self.phone_number.blank?
