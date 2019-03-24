@@ -3,7 +3,6 @@ class User < ApplicationRecord
   validates :phone_number, presence: true, uniqueness: true
   validate :format_vn_phone_number
   validates_presence_of  :name
-  validates_format_of :name, :with => /\A[^0-9`!@#\$%\^&*+_=]+\z/, allow_nil: true
 
   DAUSO_VIETNAM = %w(03 05 07 08 09)
 
