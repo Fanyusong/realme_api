@@ -14,7 +14,12 @@ class AuthenticateUser
   attr_accessor :login
 
   def user
-    user = User.where(email: login).or(User.where(phone_number: login))&.first
+    find_user = User.where(phone_number: login)
+    if find_user.any?
+      user = find_user&.first
+      return user if user
+    end
+    user = User.where(email: login)&.first
     return user if user
     raise(ExceptionHandler::AuthenticationError, Message.invalid_credentials)
   end
