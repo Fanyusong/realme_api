@@ -20,7 +20,13 @@ class ApplicationController < ActionController::API
   end
 
   def register
-    user = User.new(user_params)
+    email = user_params[:email].strip if user_params[:email].present?
+    phone_number = user_params[:phone_number].strip
+    name = user_params[:name]
+    user = User.new
+    user.email = email if user_params[:email].present?
+    user.name = name
+    user.phone_number = phone_number
     if user.save
       auth_token = AuthenticateUser.new(user.phone_number).call
       render json: {
