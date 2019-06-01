@@ -62,15 +62,23 @@ class ApplicationController < ActionController::API
   end
 
   def sharing
-    @current_user.update!({ sharing_day: Date.today, lives: @current_user.lives + 1 }) unless @current_user.sharing_day
+    if  @current_user.sharing_day.nil? || @current_user.sharing_day.to_time != Date.today.to_time
+      @current_user.update!({ sharing_day: Date.today, lives: @current_user.lives + 1 })
+    end
 
     render json: @current_user
   end
 
   def identify
-    @current_user.update!({ identify: true, lives: @current_user.lives + 1 }) unless @current_user.identify
+    @current_user.update!({ identify: true }) unless @current_user.identify
 
     render json: @current_user
+  end
+
+  def count_user
+    render json: {
+        total_user: User.all.count
+    }
   end
 
   private
