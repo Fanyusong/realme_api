@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::API
-  before_action :authorize_request, except: [:register, :sign_in, :home, :route_not_found]
+  before_action :authorize_request, except: [:register, :sign_in, :home, :route_not_found, :count_user]
   attr_reader :current_user
   include ExceptionHandler
 
