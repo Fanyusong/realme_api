@@ -54,10 +54,10 @@ class ApplicationController < ActionController::API
   end
 
   def update_live
-    current_user.update!(live_params)
+    @current_user.update!({lives: @current_user.lives - 1}) unless @current_user.lives.zero?
 
     render json: {
-      message: true
+      lives: @current_user.lives
     }
   end
 
