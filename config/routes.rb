@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   put 'sharing', to: 'application#sharing'
   put 'identify', to: 'application#identify'
   get 'me', to: 'application#me'
+  get 'count_user', to: 'application#count_user'
 
   root to: "application#home"
   match '*unmatched', to: 'application#route_not_found', via: :all
