@@ -62,7 +62,7 @@ class ApplicationController < ActionController::API
   end
 
   def sharing
-    if  @current_user.sharing_day.nil? || @current_user.sharing_day.to_time != Date.today.to_time
+    if  @current_user.sharing_day.nil? || @current_user.sharing_day.to_time != Date.today.strftime("%-m/%-d/%Y").to_time
       @current_user.update!({ sharing_day: Date.today, lives: @current_user.lives + 1 })
     end
 
