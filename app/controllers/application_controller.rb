@@ -27,9 +27,7 @@ class ApplicationController < ActionController::API
     if user.save
       auth_token = AuthenticateUser.new(user.phone_number).call
       render json: {
-          data: {
-              token: auth_token.result
-          }
+          data: data.result
       }, status: 200
     else
       render json: {
@@ -40,12 +38,26 @@ class ApplicationController < ActionController::API
     end
   end
 
-  def sign_in
-    auth_token = AuthenticateUser.new(auth_params[:login]).call
+  def me
     render json: {
-      data: {
-          token: auth_token.result
-      }
+        data: {
+            user: @current_user
+        }
+    }
+  end
+
+  def sign_in
+    data = AuthenticateUser.new(auth_params[:login]).call
+    render json: {
+      data: data.result
+    }
+  end
+
+  def update_live
+    current_user.update!(live_params)
+
+    render json: {
+      message: true
     }
   end
 
@@ -57,6 +69,10 @@ class ApplicationController < ActionController::API
 
   def auth_params
     params.permit(:login)
+  end
+
+  def live_params
+    params.permit(:value)
   end
 
   def authorize_request
