@@ -25,7 +25,7 @@ class ApplicationController < ActionController::API
     user.phone_number = user_params[:phone_number].strip if user_params[:phone_number].present?
     user.name = user_params[:name].strip if user_params[:name].present?
     if user.save
-      auth_token = AuthenticateUser.new(user.phone_number).call
+      data = AuthenticateUser.new(user.phone_number).call
       render json: {
           data: data.result
       }, status: 200
