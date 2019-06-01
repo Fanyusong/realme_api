@@ -41,7 +41,7 @@ class ApplicationController < ActionController::API
   def me
     render json: {
         data: {
-            token: request.headers['Authorization'][8, request.headers['Authorization'].length],
+            token: request.headers['Authorization'].split(' ').last,
             user: @current_user
         }
     }
