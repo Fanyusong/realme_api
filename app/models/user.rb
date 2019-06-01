@@ -1,6 +1,5 @@
 class User < ApplicationRecord
-  validates_format_of :email,:with => /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/
-  %i[:name, :phone_number, :email].each do |val|
-    validates_presence_of  val
-  end
+  validates :email, presence: true, uniqueness: true, format: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/
+  validates  :phone_number, presence: true, uniqueness: true
+  validates_presence_of  :name
 end

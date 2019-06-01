@@ -30,7 +30,7 @@ class ApplicationController < ActionController::API
           data: {
               token: auth_token.result
           }
-      }
+      }, status: 200
     else
       render json: {
           data: {
