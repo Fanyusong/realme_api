@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::API
-  before_action :authorize_request, except: [:register, :sign_in, :home, :route_not_found, :number_of_users]
+  before_action :authorize_request, except: [:register, :sign_in, :home, :route_not_found]
   attr_reader :current_user
   include ExceptionHandler
 
@@ -20,13 +20,10 @@ class ApplicationController < ActionController::API
   end
 
   def register
-    email = user_params[:email].strip if user_params[:email].present?
-    phone_number = user_params[:phone_number].strip
-    name = user_params[:name]
     user = User.new
-    user.email = email if user_params[:email].present?
-    user.name = name
-    user.phone_number = phone_number
+    user.email = user_params[:email].strip if user_params[:email].present?
+    user.phone_number = user_params[:phone_number].strip if user_params[:phone_number].present?
+    user.name = user_params[:name].strip if user_params[:name].present?
     if user.save
       auth_token = AuthenticateUser.new(user.phone_number).call
       render json: {
@@ -56,10 +53,6 @@ class ApplicationController < ActionController::API
 
   def user_params
     params.permit(:email, :phone_number, :name)
-  end
-
-  def receive_mail_params
-    params.permit(:is_received_email)
   end
 
   def auth_params
