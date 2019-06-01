@@ -28,6 +28,11 @@ class ApplicationController < ActionController::API
       auth_token = AuthenticateUser.new(user.phone_number).call
       render json: {
           data: {
+              user: {
+                email: user.email,
+                name: user.name,
+                phone_number: user.phone_number
+              },
               token: auth_token.result
           }
       }, status: 200
