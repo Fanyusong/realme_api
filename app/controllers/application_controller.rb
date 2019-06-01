@@ -48,6 +48,8 @@ class ApplicationController < ActionController::API
 
   def sign_in
     data = AuthenticateUser.new(auth_params[:login]).call
+    data.result[:user].update!(login_date: Date.today)
+
     render json: {
       data: data.result
     }
