@@ -63,7 +63,7 @@ class ApplicationController < ActionController::API
   end
 
   def sharing
-    if @current_user.sharing_day.nil?
+    unless @current_user.sharing_day.nil?
       newDay = @current_user.sharing_day.split('/')
       compare_day = Date.new(newDay[2].to_i, newDay[0].to_i, newDay[1].to_i).to_s
     end
