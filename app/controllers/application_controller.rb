@@ -61,6 +61,18 @@ class ApplicationController < ActionController::API
     }
   end
 
+  def sharing
+    @current_user.update!({ sharing_day: Date.today, lives: @current_user.lives + 1 }) unless @current_user.sharing_day
+
+    render json: @current_user
+  end
+
+  def identify
+    @current_user.update!({ identify: true, lives: @current_user.lives + 1 }) unless @current_user.identify
+
+    render json: @current_user
+  end
+
   private
 
   def user_params
