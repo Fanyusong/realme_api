@@ -81,6 +81,11 @@ class ApplicationController < ActionController::API
     }
   end
 
+  def update_game
+    @current_user.update!(game_params)
+    render json: @current_user
+  end
+
   private
 
   def user_params
@@ -93,6 +98,10 @@ class ApplicationController < ActionController::API
 
   def live_params
     params.permit(:value)
+  end
+
+  def game_params
+    params.permit(params[:application].keys.first)
   end
 
   def authorize_request
