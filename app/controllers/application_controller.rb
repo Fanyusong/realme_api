@@ -63,10 +63,13 @@ class ApplicationController < ActionController::API
   end
 
   def sharing
-    if  @current_user.sharing_day.nil? || @current_user.sharing_day.strftime("%m-%d-%Y").to_s != Date.today.strftime("%m-%d-%Y").to_s
+    if @current_user.sharing_day.nil?
+      newDay = @current_user.sharing_day.split('/')
+      compare_day = Date.new(newDay[2].to_i, newDay[0].to_i, newDay[1].to_i).to_s
+    end
+    if  @current_user.sharing_day.nil? || ( compare_day && compare_day != DateTime.parse(Time.now.to_s).strftime("%Y-%m-%d"))
       @current_user.update!({ sharing_day: Date.today, lives: @current_user.lives + 1 })
     end
-
     render json: @current_user
   end
 
