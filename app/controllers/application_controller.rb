@@ -52,74 +52,10 @@ class ApplicationController < ActionController::API
     }
   end
 
-  def update_game_score
-    score = current_user.update_info_game_score(game_score_params)
-    if score
-      render json: {
-          data: {
-              message: 'Update game score success'
-          }
-      }
-    else
-      render json: {
-          data: {
-              message: 'Update game score failed'
-          }
-      }, status: 422
-    end
-  end
-
-  def receive_email
-    unless @current_user.email.blank?
-      @current_user.update(is_received_email: receive_mail_params[:is_received_email])
-      render json: {
-          data: {
-              message: 'Update status of receive email success'
-          }
-      }
-    else
-      render json: {
-          data: {
-              message: 'Please update your email'
-          }
-      }, status: 422
-    end
-  end
-
-  def profile
-    render json: {
-        data: {
-            email: @current_user&.email,
-            phone_number: @current_user&.phone_number,
-            name: @current_user&.name,
-            game_1: @current_user.game_1,
-            game_2: @current_user.game_2,
-            game_3: @current_user.game_3,
-            game_4: @current_user.game_4,
-            game_5: @current_user.game_5,
-            game_6: @current_user.game_6,
-            is_received_email: @current_user.is_received_email
-        }
-    }
-  end
-
-  def number_of_users
-    number = User.count
-    render json: {
-        data: {
-            number: number
-        }
-    }
-  end
-
   private
 
   def user_params
-    params.permit(:email, :phone_number, :address, :name, :is_received_email)
-  end
-
-  def game_score_params
-    params.permit(:game_1, :game_2, :game_3, :game_4, :game_5, :game_6)
+    params.permit(:email, :phone_number, :name)
   end
 
   def receive_mail_params
