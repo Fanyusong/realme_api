@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   put 'update_live', to: 'application#update_live'
   put 'sharing', to: 'application#sharing'
   put 'identify', to: 'application#identify'
+  put 'update_game_score', to: 'application#update_game'
+
   get 'me', to: 'application#me'
   get 'count_user', to: 'application#count_user'
 
