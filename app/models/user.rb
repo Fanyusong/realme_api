@@ -4,6 +4,6 @@ class User < ApplicationRecord
   validates_presence_of  :name
 
   def sharing_day
-    attributes['sharing_day'].strftime("%-m/%-d/%Y")
+    attributes['sharing_day'].strftime("%-m/%-d/%Y") unless attributes['sharing_day'].nil?
   end
 end
