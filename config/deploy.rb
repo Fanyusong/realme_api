@@ -31,7 +31,7 @@ set :puma_worker_timeout, nil
 set :puma_init_active_record, true  # Change to false when not using ActiveRecord
 
 ## Linked Files & Directories (Default None):
-set :linked_files, %w{config/config.yml config/database.yml config/master.key config/nginx.conf config/nginx.dev.conf}
+set :linked_files, %w{config/config.yml config/database.yml config/master.key config/nginx.dev.conf}
 set :linked_dirs,  %w{log tmp vendor public}
 
 namespace :puma do
@@ -61,9 +61,9 @@ namespace :deploy do
       database = File.join(File.dirname(__FILE__), 'database.yml')
       config_path = File.join(File.dirname(__FILE__), 'config.yml')
       master_key_path = File.join(File.dirname(__FILE__), 'master.key')
-      nginx_conf_path = File.join(File.dirname(__FILE__), 'nginx.conf')
+      # nginx_conf_path = File.join(File.dirname(__FILE__), 'nginx.conf')
       nginx_dev_conf_path = File.join(File.dirname(__FILE__), 'nginx.dev.conf')
-      upload! nginx_conf_path, "#{shared_path}/config/nginx.conf"
+      # upload! nginx_conf_path, "#{shared_path}/config/nginx.conf"
       upload! nginx_dev_conf_path, "#{shared_path}/config/nginx.dev.conf"
       upload! config_path, "#{shared_path}/config/config.yml"
       upload! database, "#{shared_path}/config/database.yml"
