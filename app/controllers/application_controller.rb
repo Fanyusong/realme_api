@@ -105,7 +105,7 @@ class ApplicationController < ActionController::API
   end
 
   def game_params
-    params.permit(params[:application].keys.first)
+    params.permit(:game_1, :game_2, :game_3, :game_4, :game_5)
   end
 
   def authorize_request
