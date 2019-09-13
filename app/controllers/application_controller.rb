@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::API
-  before_action :authorize_request, except: [:register, :sign_in, :home, :route_not_found, :count_user]
+  before_action :authorize_request, only: [:me, :update_live, :sharing, :identify, :update_game]
   attr_reader :current_user
   include ExceptionHandler
 
@@ -90,10 +90,42 @@ class ApplicationController < ActionController::API
     render json: @current_user
   end
 
+  def new_post
+    @post = Post.new(post_params)
+    if @post.save
+      render json: {message: 'Create Post Success'}
+    else
+      render json: {message: @post.errors.full_messages}, status: 422
+    end
+  end
+
+  def posts
+    @posts = Post.order("RAND()").limit(3)
+    data = []
+    @posts.each do |post|
+      data << {
+          name: post.name,
+          email: post.email,
+          phone_number: post.phone_number,
+          content: post.content,
+          avatar: url_for(post.avatar)
+      }
+    end
+    render json: {
+        data: {
+            posts: data
+        }
+    }
+  end
+
   private
 
   def user_params
     params.permit(:email, :phone_number, :name)
+  end
+
+  def post_params
+    params.permit(:name, :phone_number, :email, :content, :avatar)
   end
 
   def auth_params
