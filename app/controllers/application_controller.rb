@@ -120,7 +120,7 @@ class ApplicationController < ActionController::API
   private
 
   def user_params
-    params.permit(:email, :phone_number, :name)
+    params.permit(:email, :phone_number, :name, :is_received_email)
   end
 
   def post_params
