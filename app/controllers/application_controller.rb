@@ -117,6 +117,12 @@ class ApplicationController < ActionController::API
     }
   end
 
+  def error_report
+    return render json: {message: 'Create Post Success'} if error_params[:message].empty?
+    @error = Error.new(error_params)
+    render json: {message: 'Create Post Success'}
+  end
+
   private
 
   def user_params
@@ -125,6 +131,10 @@ class ApplicationController < ActionController::API
 
   def post_params
     params.permit(:name, :title, :content, :avatar)
+  end
+
+  def error_params
+    params.permit(:message)
   end
 
   def auth_params
