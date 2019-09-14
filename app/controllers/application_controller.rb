@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::API
-  before_action :authorize_request, only: [:me, :update_live, :sharing, :identify, :update_game]
+  before_action :authorize_request, only: [:me, :update_live, :sharing, :identify, :update_game, :new_post]
   attr_reader :current_user
   include ExceptionHandler
 
@@ -91,7 +91,7 @@ class ApplicationController < ActionController::API
   end
 
   def new_post
-    @post = Post.new(post_params)
+    @post = @current_user.posts.new(post_params)
     if @post.save
       render json: {message: 'Create Post Success'}
     else
