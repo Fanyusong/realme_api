@@ -105,8 +105,7 @@ class ApplicationController < ActionController::API
     @posts.each do |post|
       data << {
           name: post.name,
-          email: post.email,
-          phone_number: post.phone_number,
+          title: post.title,
           content: post.content,
           avatar: url_for(post.avatar)
       }
@@ -125,7 +124,7 @@ class ApplicationController < ActionController::API
   end
 
   def post_params
-    params.permit(:name, :phone_number, :email, :content, :avatar)
+    params.permit(:name, :title, :content, :avatar)
   end
 
   def auth_params

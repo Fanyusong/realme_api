@@ -3,5 +3,5 @@ class Post < ApplicationRecord
   validates :title, presence: true
   validates :content, presence: true
   has_one_attached :avatar
-  belongs_to :post
+  belongs_to :user
 end
