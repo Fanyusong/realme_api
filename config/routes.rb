@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   put 'sharing', to: 'application#sharing'
   put 'identify', to: 'application#identify'
   put 'update_game_score', to: 'application#update_game'
+  post 'report', to: 'application#error_report'
 
   get 'me', to: 'application#me'
   get 'posts', to: 'application#posts'
