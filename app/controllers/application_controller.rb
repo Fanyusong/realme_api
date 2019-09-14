@@ -120,6 +120,7 @@ class ApplicationController < ActionController::API
   def error_report
     return render json: {message: 'Create Post Success'} if error_params[:message].empty?
     @error = Error.new(error_params)
+    @error.save
     render json: {message: 'Create Post Success'}
   end
 
