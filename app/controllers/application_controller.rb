@@ -107,7 +107,7 @@ class ApplicationController < ActionController::API
           name: post.name,
           title: post.title,
           content: post.content,
-          avatar: url_for(post.avatar)
+          avatar: url_for(post.avatar).nil? ? nil : url_for(post.avatar)&.gsub('http', 'https')
       }
     end
     render json: {
