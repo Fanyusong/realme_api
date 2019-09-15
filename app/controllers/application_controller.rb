@@ -107,7 +107,7 @@ class ApplicationController < ActionController::API
           name: post.name,
           title: post.title,
           content: post.content,
-          avatar: url_for(post.avatar)
+          avatar: ('https://vaichuoi.com/' + post.avatar.current_path)
       }
     end
     render json: {
