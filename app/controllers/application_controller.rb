@@ -118,7 +118,7 @@ class ApplicationController < ActionController::API
   end
 
   def all_posts
-    @posts = Post.includes(:user).page(params[:page] || 1).per(params[:per] || 10)
+    @posts = Post.includes(:user).page(params[:page] || 1).per(10)
     data = []
     @posts.each do |post|
       data << {
@@ -136,8 +136,8 @@ class ApplicationController < ActionController::API
             current_page: @posts.current_page,
             next_page: @posts.next_page,
             prev_page: @posts.prev_page,
-            per_page: per_page,
-            total_count: @contests.total_count
+            per_page: 10,
+            total_count: @posts.total_count
         }
     }
   end
