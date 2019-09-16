@@ -120,7 +120,7 @@ class ApplicationController < ActionController::API
   def all_posts
     @posts = Post.includes(:user).page(params[:page] || 1).per(params[:per] || 10)
     data = []
-    @posts.each do |val|
+    @posts.each do |post|
       data << {
           email: post.user.email,
           phone_number: post.user.phone_number,
