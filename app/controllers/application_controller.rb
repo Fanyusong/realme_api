@@ -100,7 +100,7 @@ class ApplicationController < ActionController::API
   end
 
   def posts
-    @posts = Post.where(is_ok: true).order("RAND()").limit(3)
+    @posts = Post.includes(:user).where(is_ok: true).order("RAND()").limit(3)
     data = []
     @posts.each do |post|
       data << {
@@ -118,7 +118,28 @@ class ApplicationController < ActionController::API
   end
 
   def all_posts
-
+    @posts = Post.includes(:user).page(params[:page] || 1).per(params[:per] || 10)
+    data = []
+    @posts.each do |val|
+      data << {
+          email: post.user.email,
+          phone_number: post.user.phone_number,
+          name: post.name,
+          title: post.title,
+          content: post.content,
+          avatar: post.avatar&.url.nil? ? nil : ('https://vaichuoi.com' + post.avatar.url)
+      }
+    end
+    render json: {
+        data: data,
+        meta: {
+            current_page: @posts.current_page,
+            next_page: @posts.next_page,
+            prev_page: @posts.prev_page,
+            per_page: per_page,
+            total_count: @contests.total_count
+        }
+    }
   end
 
   def error_report

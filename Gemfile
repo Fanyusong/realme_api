@@ -20,6 +20,8 @@ gem 'carrierwave', '~> 2.0'
 gem 'jwt'
 
 gem 'simple_command'
+# Pagination
+gem 'kaminari'
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
 
