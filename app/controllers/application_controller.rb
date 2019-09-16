@@ -112,7 +112,7 @@ class ApplicationController < ActionController::API
     end
     render json: {
         data: {
-            posts: data
+            posts: []
         }
     }
   end
