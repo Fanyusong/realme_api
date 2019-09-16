@@ -100,7 +100,7 @@ class ApplicationController < ActionController::API
   end
 
   def posts
-    @posts = Post.order("RAND()").limit(3)
+    @posts = Post.where(is_ok: true).order("RAND()").limit(3)
     data = []
     @posts.each do |post|
       data << {
@@ -112,9 +112,13 @@ class ApplicationController < ActionController::API
     end
     render json: {
         data: {
-            posts: []
+            posts: data
         }
     }
+  end
+
+  def all_posts
+
   end
 
   def error_report
