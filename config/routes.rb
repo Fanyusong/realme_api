@@ -11,6 +11,7 @@ Rails.application.routes.draw do
 
   get 'me', to: 'application#me'
   get 'posts', to: 'application#posts'
+  get 'all_posts', to: 'application#all_posts'
   get 'count_user', to: 'application#count_user'
 
   root to: "application#home"
