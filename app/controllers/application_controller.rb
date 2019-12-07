@@ -95,7 +95,7 @@ class ApplicationController < ActionController::API
     so_trung_thuong = RewardList.where(id: random_number)
     unless so_trung_thuong.nil?
       Reward.create(reward_number: random_number,
-                    reward_type: so_trung_thuong.reward_type_id,
+                    reward_type_id: so_trung_thuong.reward_type_id,
                     user_id: @current_user.id)
       render json: {
           is_trung_thuong: true,
