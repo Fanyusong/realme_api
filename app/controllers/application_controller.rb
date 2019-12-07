@@ -90,77 +90,10 @@ class ApplicationController < ActionController::API
     render json: @current_user
   end
 
-  def new_post
-    @post = @current_user.posts.new(post_params)
-    if @post.save
-      render json: {message: 'Create Post Success'}
-    else
-      render json: {message: @post.errors.full_messages}, status: 422
-    end
-  end
-
-  def posts
-    @posts = Post.includes(:user).where(is_ok: true).order("RAND()").limit(3)
-    data = []
-    @posts.each do |post|
-      data << {
-          name: post.name,
-          title: post.title,
-          content: post.content,
-          avatar: post.avatar&.url.nil? ? nil : ('https://vaichuoi.com' + post.avatar.url)
-      }
-    end
-    render json: {
-        data: {
-            posts: data
-        }
-    }
-  end
-
-  def all_posts
-    @posts = Post.includes(:user).page(params[:page] || 1).per(10)
-    data = []
-    @posts.each do |post|
-      data << {
-          email: post.user.email,
-          phone_number: post.user.phone_number,
-          name: post.name,
-          title: post.title,
-          content: post.content,
-          avatar: post.avatar&.url.nil? ? nil : ('https://vaichuoi.com' + post.avatar.url)
-      }
-    end
-    render json: {
-        data: data,
-        meta: {
-            current_page: @posts.current_page,
-            next_page: @posts.next_page,
-            prev_page: @posts.prev_page,
-            per_page: 10,
-            total_count: @posts.total_count
-        }
-    }
-  end
-
-  def error_report
-    return render json: {message: 'Create Post Success'} if error_params[:message].empty?
-    @error = Error.new(error_params)
-    @error.save
-    render json: {message: 'Create Post Success'}
-  end
-
   private
 
   def user_params
     params.permit(:email, :phone_number, :name, :is_received_email)
-  end
-
-  def post_params
-    params.permit(:name, :title, :content, :avatar)
-  end
-
-  def error_params
-    params.permit(:message)
   end
 
   def auth_params
