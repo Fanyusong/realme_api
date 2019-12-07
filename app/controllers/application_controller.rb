@@ -92,7 +92,7 @@ class ApplicationController < ActionController::API
 
   def quay_so
     random_number = rand(600000)
-    so_trung_thuong = RewardList.where(id: random_number)
+    so_trung_thuong = RewardList.where(id: random_number)&.first
     unless so_trung_thuong.nil?
       Reward.create(reward_number: random_number,
                     reward_type_id: so_trung_thuong.reward_type_id,
