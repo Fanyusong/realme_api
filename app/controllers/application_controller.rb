@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::API
-  before_action :authorize_request, only: [:me, :update_live, :sharing, :identify, :update_game, :new_post]
+  before_action :authorize_request, only: [:me, :update_live, :sharing, :quay_so, :identify, :update_game, :new_post]
   attr_reader :current_user
   include ExceptionHandler
 
@@ -90,6 +90,24 @@ class ApplicationController < ActionController::API
     render json: @current_user
   end
 
+  def quay_so
+    random_number = rand(600000)
+    so_trung_thuong = RewardList.where(id: random_number)
+    unless is_trung_thuong.nil?
+      render json: {
+          is_trung_thuong: true,
+          data: "Bạn đã trúng 1 chiếc #{so_trung_thuong.reward_type.name}",
+          type: so_trung_thuong.reward_type.name
+      }
+    else
+      render json: {
+          is_trung_thuong: false,
+          data: 'Chúc bạn may mắn lần sau',
+          type: 'trung_gio'
+      }
+    end
+  end
+
   private
 
   def user_params
@@ -100,12 +118,8 @@ class ApplicationController < ActionController::API
     params.permit(:login)
   end
 
-  def live_params
-    params.permit(:value)
-  end
-
   def game_params
-    params.permit(:game_1, :game_2, :game_3, :game_4, :game_5)
+    params.permit(:game_1, :game_2)
   end
 
   def authorize_request
