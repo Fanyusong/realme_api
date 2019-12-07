@@ -106,7 +106,7 @@ class ApplicationController < ActionController::API
       render json: {
           is_trung_thuong: false,
           data: 'Chúc bạn may mắn lần sau',
-          type: 'trung_gio'
+          type: 'Trúng gió'
       }
     end
   end
