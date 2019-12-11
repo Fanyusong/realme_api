@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::API
-  before_action :authorize_request, only: [:me, :update_live, :sharing, :quay_so, :identify, :update_game, :new_post]
+  before_action :authorize_request, only: [:me, :sharing, :quay_so, :history, :change_coin_to_live]
   attr_reader :current_user
   include ExceptionHandler
 
@@ -54,12 +54,24 @@ class ApplicationController < ActionController::API
     }
   end
 
-  def update_live
-    @current_user.update!({lives: @current_user.lives - 1}) unless @current_user.lives.zero?
-
-    render json: {
-      lives: @current_user.lives
-    }
+  def change_coin_to_live
+    live_number = @current_user.coin / 1000
+    if live_number >= 1
+      remain_coin = @current_user.coin - (live_number * 1000)
+      @current_user.update(lives: live_number, coin: remain_coin)
+      render json: {
+          is_success: true,
+          data: {
+              lives: live_number,
+              coin: remain_coin
+          }
+      }
+    else
+      render json: {
+          is_success: false,
+          message: 'Bạn không có đủ số xu để đổi 1 lượt quay'
+      }
+    end
   end
 
   def sharing
@@ -68,14 +80,8 @@ class ApplicationController < ActionController::API
       compare_day = Date.new(newDay[2].to_i, newDay[0].to_i, newDay[1].to_i).to_s
     end
     if  @current_user.sharing_day.nil? || ( compare_day && compare_day != DateTime.parse(Time.now.to_s).strftime("%Y-%m-%d"))
-      @current_user.update!({ sharing_day: Date.today, lives: @current_user.lives + 1 })
+      @current_user.update!({ sharing_day: Date.today, coin: @current_user.coin + 1000 })
     end
-    render json: @current_user
-  end
-
-  def identify
-    @current_user.update!({ identify: true }) unless @current_user.identify
-
     render json: @current_user
   end
 
@@ -85,30 +91,58 @@ class ApplicationController < ActionController::API
     }
   end
 
-  def update_game
-    @current_user.update!(game_params)
-    render json: @current_user
-  end
-
   def quay_so
-    random_number = rand(600000)
-    so_trung_thuong = RewardList.where(id: random_number)&.first
-    unless so_trung_thuong.nil?
-      Reward.create(reward_number: random_number,
-                    reward_type_id: so_trung_thuong.reward_type_id,
-                    user_id: @current_user.id)
-      render json: {
-          is_trung_thuong: true,
-          data: "Bạn đã trúng #{so_trung_thuong.reward_type.name}",
-          type: so_trung_thuong.reward_type.name
-      }
-    else
-      render json: {
-          is_trung_thuong: false,
-          data: 'Chúc bạn may mắn lần sau',
-          type: 'Trúng gió'
+    unless @current_user.lives > 0
+      return render json: {
+          is_sucess: false,
+          message: 'Bạn không còn lượt quay'
       }
     end
+    random_number = rand(600000)
+    so_trung_thuong = RewardList.where(id: random_number)&.first
+    @current_user.update(lives: (@current_user.lives - 1 ))
+
+    unless so_trung_thuong.nil?
+      Reward.create(reward_number: random_number,
+                    description: so_trung_thuong.reward_type.name,
+                    reward_type_id: so_trung_thuong.reward_type_id,
+                    user_id: @current_user.id)
+      type = so_trung_thuong.reward_type.name
+      if (so_trung_thuong.reward_type.name == 'realme-hat' || so_trung_thuong.reward_type.name == 'realme-phone' || so_trung_thuong.reward_type.name == 'realme-headphone')
+        so_trung_thuong.delete
+      end
+      render json: {
+        is_sucess: true,
+        data: {
+            is_trung_thuong: true,
+            message: "Bạn đã trúng #{type}",
+            type: type
+        }
+      }
+    else
+      failed_reward_type = RewardType.where(name: 'failed')&.first
+      Reward.create(reward_number: random_number,
+                    description: 'failed',
+                    reward_type_id: failed_reward_type.id,
+                    user_id: @current_user.id)
+      render json: {
+        is_sucess: true,
+        data: {
+            is_trung_thuong: false,
+            data: 'Chúc bạn may mắn lần sau',
+            type: 'failed'
+        }
+      }
+    end
+  end
+
+  def history
+    histories = Reward.where(user_id: @current_user.id)
+    render json: {
+        data: {
+            histories: histories
+        }
+    }
   end
 
   private
@@ -119,10 +153,6 @@ class ApplicationController < ActionController::API
 
   def auth_params
     params.permit(:login)
-  end
-
-  def game_params
-    params.permit(:game_1, :game_2)
   end
 
   def authorize_request
