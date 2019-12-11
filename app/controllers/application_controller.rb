@@ -81,8 +81,19 @@ class ApplicationController < ActionController::API
     end
     if  @current_user.sharing_day.nil? || ( compare_day && compare_day != DateTime.parse(Time.now.to_s).strftime("%Y-%m-%d"))
       @current_user.update!({ sharing_day: Date.today, coin: @current_user.coin + 1000 })
+      render json: {
+         is_success: true,
+         data: {
+             coin: @current_user.coin,
+             lives: @current_user.lives
+         }
+      }
+    else
+      render json: {
+          is_success: false,
+          message: 'Mỗi ngày bạn chỉ được chia sẽ 1 lần'
+      }
     end
-    render json: @current_user
   end
 
   def count_user
