@@ -156,6 +156,24 @@ class ApplicationController < ActionController::API
     }
   end
 
+  def top5_recent_winner
+    top5 = RewardList.includes(:name, :reward_type)
+        .where(reward_type_id: RewardType.where(name: ['realme-hat', 'realme-phone', 'realme-headphone']).pluck(:id))
+        .order("reward_lists.created_at DESC, reward_types.priority ASC")
+    data = []
+    top5.each do |v|
+      data << {
+          name: v.user&.name,
+          phone: v.user&.phone,
+          email: v.user&.email,
+          type: v.reward_type.name
+      }
+    end
+    render json: {
+        data: data
+    }
+  end
+
   private
 
   def user_params

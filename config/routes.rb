@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   get 'change_coin_to_live', to: 'application#change_coin_to_live'
   get 'history', to: 'application#history'
   get 'sharing', to: 'application#sharing'
+  get 'top5_recent_winner', to: 'application#top5_recent_winner'
 
   root to: "application#home"
   # match '*unmatched', to: 'application#route_not_found', via: :all
