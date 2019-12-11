@@ -140,7 +140,7 @@ class ApplicationController < ActionController::API
         is_sucess: true,
         data: {
             is_trung_thuong: false,
-            data: 'Chúc bạn may mắn lần sau',
+            message: 'Chúc bạn may mắn lần sau',
             type: 'failed'
         }
       }
