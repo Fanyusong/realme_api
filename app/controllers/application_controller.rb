@@ -62,8 +62,8 @@ class ApplicationController < ActionController::API
       render json: {
           is_success: true,
           data: {
-              lives: live_number,
-              coin: remain_coin
+              lives: @current_user.lives,
+              coin: @current_user.coin
           }
       }
     else
