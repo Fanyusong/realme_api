@@ -121,6 +121,16 @@ class ApplicationController < ActionController::API
       type = so_trung_thuong.reward_type.name
       if (so_trung_thuong.reward_type.name == 'realme-hat' || so_trung_thuong.reward_type.name == 'realme-phone' || so_trung_thuong.reward_type.name == 'realme-headphone')
         so_trung_thuong.delete
+      else
+        added_coin = 0
+        if so_trung_thuong.reward_type.name == '100-xu'
+          added_coin = 100
+        elsif  so_trung_thuong.reward_type.name == '500-xu'
+          added_coin = 500
+        else
+          added_coin = 700
+        end
+        @current_user.update(coin: (@current_user.coin + added_coin))
       end
       render json: {
         is_sucess: true,
@@ -148,7 +158,7 @@ class ApplicationController < ActionController::API
   end
 
   def history
-    histories = Reward.where(user_id: @current_user.id)
+    histories = Reward.where(user_id: @current_user.id, reward_type_id: RewardType.where(name: ['realme-hat', 'realme-phone', 'realme-headphone']).pluck(:id))
     render json: {
         data: {
             histories: histories
@@ -162,9 +172,11 @@ class ApplicationController < ActionController::API
         .order("rewards.created_at DESC, reward_types.priority ASC").limit(5)
     data = []
     top5.each do |v|
+      phone = v.user&.phone_number
+      phone[0..3] = "xxxx"
       data << {
           name: v.user&.name,
-          phone: v.user&.phone_number,
+          phone: phone,
           email: v.user&.email,
           type: v.reward_type.name,
           created_at: v.created_at
