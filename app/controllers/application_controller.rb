@@ -167,7 +167,7 @@ class ApplicationController < ActionController::API
   end
 
   def history
-    histories = Reward.where(user_id: @current_user.id, reward_type_id: RewardType.where(name: ['realme-hat', 'realme-phone', 'realme-headphone']).pluck(:id))
+    histories = Reward.where(user_id: @current_user.id)
     render json: {
         data: {
             histories: histories
