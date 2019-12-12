@@ -123,9 +123,9 @@ class ApplicationController < ActionController::API
         so_trung_thuong.delete
       else
         added_coin = 0
-        if so_trung_thuong.reward_type.name == '100-xu'
+        if so_trung_thuong.reward_type.name == '100xu'
           added_coin = 100
-        elsif  so_trung_thuong.reward_type.name == '500-xu'
+        elsif  so_trung_thuong.reward_type.name == '500xu'
           added_coin = 500
         else
           added_coin = 700
