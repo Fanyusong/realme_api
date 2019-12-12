@@ -118,6 +118,9 @@ class ApplicationController < ActionController::API
     total = [phone_and_headphone_ids, xu100_ids, xu500_ids, xu700_ids, hat_ids, failed_ids].flatten
     total.sample
     random_number = total.sample
+    # number = RandomNumber.limit(1)
+    # random_number = number.random_number
+    # number.delete
     # random_number = rand(600000)
     so_trung_thuong = RewardList.where(id: random_number)&.first
     @current_user.update(lives: (@current_user.lives - 1 ))

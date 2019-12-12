@@ -6,8 +6,7 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 #
-random_numbers = (1..600000).sort_by{ rand }
-non_numbers = []
+random_numbers = (1..500000).sort_by{ rand }
 random_numbers.shift(100).each do |v|
   RewardList.create(random_number: v, reward_type_id: 1)
 end
@@ -25,5 +24,9 @@ random_numbers.shift(30).each do |v|
 end
 random_numbers.shift(1).each do |v|
   RewardList.create(random_number: v, reward_type_id: 6)
+end
+random_numbers_2 = (1..500000).sort_by{ rand }
+random_numbers_2.each do |v|
+  RandomNumber.create(number: v)
 end
 # RewardList.create(non_numbers)

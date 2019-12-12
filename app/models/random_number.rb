@@ -1,0 +1,2 @@
+class RandomNumber < ApplicationRecord
+end
