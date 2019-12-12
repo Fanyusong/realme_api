@@ -167,7 +167,7 @@ class ApplicationController < ActionController::API
   end
 
   def history
-    histories = Reward.where(user_id: @current_user.id)
+    histories = Reward.where(user_id: @current_user.id).order(created_at: :desc)
     render json: {
         data: {
             histories: histories
