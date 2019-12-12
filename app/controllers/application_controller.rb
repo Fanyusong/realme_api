@@ -110,10 +110,10 @@ class ApplicationController < ActionController::API
       }
     end
     phone_and_headphone_ids = RewardList.where(reward_type_id: RewardType.where(name: ['realme-phone', 'realme-headphone']).pluck(:id)).pluck(:id)
-    xu100_ids = RewardList.where(reward_type_id: RewardType.where(name: '100xu').limit(20).pluck(:id)).pluck(:id)
-    xu500_ids = RewardList.where(reward_type_id: RewardType.where(name: '500xu').limit(20).pluck(:id)).pluck(:id)
-    xu700_ids = RewardList.where(reward_type_id: RewardType.where(name: '700xu').limit(20).pluck(:id)).pluck(:id)
-    hat_ids = RewardList.where(reward_type_id: RewardType.where(name: 'realme-hat').limit(10).pluck(:id)).pluck(:id)
+    xu100_ids = RewardList.where(reward_type_id: RewardType.where(name: '100xu').pluck(:id)).limit(20).pluck(:id)
+    xu500_ids = RewardList.where(reward_type_id: RewardType.where(name: '500xu').pluck(:id)).limit(20).pluck(:id)
+    xu700_ids = RewardList.where(reward_type_id: RewardType.where(name: '700xu').pluck(:id)).limit(20).pluck(:id)
+    hat_ids = RewardList.where(reward_type_id: RewardType.where(name: 'realme-hat').pluck(:id)).limit(20).pluck(:id)
     failed_ids = (1000000..1000020).to_a
     total = [phone_and_headphone_ids, xu100_ids, xu500_ids, xu700_ids, hat_ids, failed_ids].flatten
     total.sample
