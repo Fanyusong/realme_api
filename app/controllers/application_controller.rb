@@ -109,7 +109,16 @@ class ApplicationController < ActionController::API
           message: 'Bạn không còn lượt quay'
       }
     end
-    random_number = rand(600000)
+    phone_and_headphone_ids = RewardList.where(reward_type_id: RewardType.where(name: ['realme-phone', 'realme-headphone']).pluck(:id)).pluck(:id)
+    xu100_ids = RewardList.where(reward_type_id: RewardType.where(name: '100xu').limit(20).pluck(:id)).pluck(:id)
+    xu500_ids = RewardList.where(reward_type_id: RewardType.where(name: '500xu').limit(20).pluck(:id)).pluck(:id)
+    xu700_ids = RewardList.where(reward_type_id: RewardType.where(name: '700xu').limit(20).pluck(:id)).pluck(:id)
+    hat_ids = RewardList.where(reward_type_id: RewardType.where(name: 'realme-hat').limit(10).pluck(:id)).pluck(:id)
+    failed_ids = (1000000..1000020).to_a
+    total = [phone_and_headphone_ids, xu100_ids, xu500_ids, xu700_ids, hat_ids, failed_ids].flatten
+    total.sample
+    random_number = total.sample
+    # random_number = rand(600000)
     so_trung_thuong = RewardList.where(id: random_number)&.first
     @current_user.update(lives: (@current_user.lives - 1 ))
 
