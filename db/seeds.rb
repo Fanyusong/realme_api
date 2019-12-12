@@ -8,7 +8,7 @@
 #
 random_numbers = (1..600000).sort_by{ rand }
 non_numbers = []
-random_numbers.shift(10000).each do |v|
+random_numbers.shift(100).each do |v|
   RewardList.create(random_number: v, reward_type_id: 1)
 end
 random_numbers.shift(200000).each do |v|
@@ -20,7 +20,7 @@ end
 random_numbers.shift(100000).each do |v|
   RewardList.create(random_number: v, reward_type_id: 4)
 end
-random_numbers.shift(10).each do |v|
+random_numbers.shift(30).each do |v|
   RewardList.create(random_number: v, reward_type_id: 5)
 end
 random_numbers.shift(1).each do |v|

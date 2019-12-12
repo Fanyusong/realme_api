@@ -61,25 +61,25 @@ namespace :deploy do
       database = File.join(File.dirname(__FILE__), 'database.yml')
       config_path = File.join(File.dirname(__FILE__), 'config.yml')
       master_key_path = File.join(File.dirname(__FILE__), 'master.key')
-      # nginx_conf_path = File.join(File.dirname(__FILE__), 'nginx.conf')
+      nginx_conf_path = File.join(File.dirname(__FILE__), 'nginx.prod.conf')
       nginx_dev_conf_path = File.join(File.dirname(__FILE__), 'nginx.dev.conf')
-      # upload! nginx_conf_path, "#{shared_path}/config/nginx.conf"
+      upload! nginx_conf_path, "#{shared_path}/config/nginx.prod.conf"
       upload! nginx_dev_conf_path, "#{shared_path}/config/nginx.dev.conf"
       upload! config_path, "#{shared_path}/config/config.yml"
       upload! database, "#{shared_path}/config/database.yml"
       upload! master_key_path, "#{shared_path}/config/master.key"
-
     end
   end
 
   desc 'Nginx'
   task :nginx do
     on roles(:all) do
-      ## Production
-      # execute "sudo ln -nfs /var/www/realme_api/shared/config/nginx.conf /etc/nginx/sites-enabled/realme_api"
-
-      ## Develop
-      execute "sudo ln -nfs /var/www/realme_api/shared/config/nginx.dev.conf /etc/nginx/sites-enabled/realme_api"
+      if fetch(:stage) == 'staging'
+        execute "sudo ln -nfs /var/www/realme_api/shared/config/nginx.dev.conf /etc/nginx/sites-enabled/realme_api"
+      end
+      if fetch(:stage) == 'production'
+        execute "sudo ln -nfs /var/www/realme_api/shared/config/nginx.prod.conf /etc/nginx/sites-enabled/realme_api"
+      end
       execute "sudo service nginx restart"
     end
   end
@@ -87,7 +87,7 @@ namespace :deploy do
   before 'deploy:check:linked_files', :copy
   # after :finishing, :assets
   after  :finishing, :cleanup
-  after  :finishing, :nginx
+  # after  :finishing, :nginx
   after  :finishing, :restart
 end
 

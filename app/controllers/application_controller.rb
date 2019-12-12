@@ -178,7 +178,7 @@ class ApplicationController < ActionController::API
   def top5_recent_winner
     top5 = Reward.joins(:reward_type, :user)
         .where(reward_type_id: RewardType.where(name: ['realme-hat', 'realme-phone', 'realme-headphone']).pluck(:id))
-        .order("rewards.created_at DESC, reward_types.priority ASC").limit(5)
+        .order("reward_types.priority ASC, rewards.created_at DESC").limit(5)
     data = []
     top5.each do |v|
       phone = v.user&.phone_number
