@@ -122,7 +122,7 @@ class ApplicationController < ActionController::API
     random_number = so_random&.number
     so_random.delete
     # random_number = rand(600000)
-    so_trung_thuong = RewardList.where(id: random_number)&.first
+    so_trung_thuong = RewardList.where(random_number: random_number)&.first
     @current_user.update(lives: (@current_user.lives - 1 ))
 
     unless so_trung_thuong.nil?
