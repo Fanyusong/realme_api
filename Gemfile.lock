@@ -234,7 +234,6 @@ DEPENDENCIES
   puma (~> 3.11)
   rack-cors
   rails (~> 5.2.2)
-  sidekiq
   sidekiq-scheduler
   simple_command
   spring
