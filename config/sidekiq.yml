@@ -8,6 +8,6 @@
   - [high_priority, 2] # high priority
 :schedule:
   UpdateUsersJob:
-    cron: '0 0 * * *'
+    cron: '30 1 * * *'
     queue: scheduler
     enabled: true
