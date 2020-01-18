@@ -118,7 +118,22 @@ class ApplicationController < ActionController::API
     # total = [phone_and_headphone_ids, xu100_ids, xu500_ids, xu700_ids, hat_ids, failed_ids].flatten
     # total.sample
     # random_number = total.sample
-    so_random = RandomNumber.first
+    so_random = RandomNumber&.first
+    if so_random.nil?
+      failed_reward_type = RewardType.where(name: 'failed')&.first
+      Reward.create(reward_number: 100000000,
+                    description: 'failed',
+                    reward_type_id: failed_reward_type.id,
+                    user_id: @current_user.id)
+      return render json: {
+          is_sucess: true,
+          data: {
+              is_trung_thuong: false,
+              message: 'Chúc bạn may mắn lần sau',
+              type: 'failed'
+          }
+      }
+    end
     random_number = so_random&.number
     so_random.delete
     # random_number = rand(600000)
