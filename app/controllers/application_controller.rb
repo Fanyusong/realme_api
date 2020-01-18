@@ -119,6 +119,7 @@ class ApplicationController < ActionController::API
     # total.sample
     # random_number = total.sample
     so_random = RandomNumber&.first
+    @current_user.update(lives: (@current_user.lives - 1 ))
     if so_random.nil?
       failed_reward_type = RewardType.where(name: 'failed')&.first
       Reward.create(reward_number: 100000000,
@@ -138,7 +139,6 @@ class ApplicationController < ActionController::API
     so_random.delete
     # random_number = rand(600000)
     so_trung_thuong = RewardList.where(random_number: random_number)&.first
-    @current_user.update(lives: (@current_user.lives - 1 ))
 
     unless so_trung_thuong.nil?
       Reward.create(reward_number: random_number,
