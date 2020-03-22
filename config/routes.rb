@@ -6,7 +6,6 @@ Rails.application.routes.draw do
 
   get 'me', to: 'application#me'
   get 'count_user', to: 'application#count_user'
-  get 'quay_so', to: 'application#quay_so'
   get 'change_coin_to_live', to: 'application#change_coin_to_live'
   get 'sharing', to: 'application#sharing'
 
