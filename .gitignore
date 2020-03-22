@@ -25,3 +25,5 @@
 /config/config.yml
 .idea/*
 
+
+/documents/realme_staging.pem

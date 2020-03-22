@@ -85,9 +85,8 @@ namespace :deploy do
   end
 
   before 'deploy:check:linked_files', :copy
-  # after :finishing, :assets
   after  :finishing, :cleanup
-  # after  :finishing, :nginx
+  after  :finishing, :nginx
   after  :finishing, :restart
 end
 

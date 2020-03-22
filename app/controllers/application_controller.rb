@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::API
-  before_action :authorize_request, only: [:me, :sharing, :quay_so, :history, :change_coin_to_live]
+  before_action :authorize_request, only: [:me, :sharing, :update_game_score, :quay_so, :history, :change_coin_to_live]
   attr_reader :current_user
   include ExceptionHandler
 
@@ -21,11 +21,19 @@ class ApplicationController < ActionController::API
 
   def register
     user = User.new
-    user.email = user_params[:email].strip if user_params[:email].present?
-    user.phone_number = user_params[:phone_number].strip if user_params[:phone_number].present?
-    user.name = user_params[:name].strip if user_params[:name].present?
+    if (user_params[:email].blank? || user_params[:phone_number].blank?)
+      render json: {
+          data: {
+              messages: 'Missing params email or phone number!'
+          }
+      }, status: 422
+    end
+    user.email = user_params[:email].strip
+    user.phone_number = user_params[:phone_number].strip
+    user.name = user_params[:username].strip if user_params[:username].present?
+    user.password = user_params[:phone_number].last(6)
     if user.save
-      data = AuthenticateUser.new(user.phone_number).call
+      data = AuthenticateUser.new(user.phone_number, user.password).call
       render json: {
           data: data.result
       }, status: 200
@@ -41,14 +49,13 @@ class ApplicationController < ActionController::API
   def me
     render json: {
         data: {
-            token: request.headers['Authorization'].split(' ').last,
             user: @current_user
         }
     }
   end
 
   def sign_in
-    data = AuthenticateUser.new(auth_params[:login]).call
+    data = AuthenticateUser.new(auth_params[:login], auth_params[:password]).call
     render json: {
       data: data.result
     }
@@ -102,126 +109,38 @@ class ApplicationController < ActionController::API
     }
   end
 
-  def quay_so
-    unless @current_user.lives > 0
-      return render json: {
-          is_sucess: false,
-          message: 'Bạn không còn lượt quay'
-      }
+  def update_game_score
+    if game_params[:game_1].present?
+      @current_user.update(game_1: game_params[:game_1])
     end
-    # phone_and_headphone_ids = RewardList.where(reward_type_id: RewardType.where(name: ['realme-phone', 'realme-headphone']).pluck(:id)).pluck(:id) # 11
-    # xu100_ids = RewardList.where(reward_type_id: RewardType.where(name: '100xu').pluck(:id)).limit(20).pluck(:id)
-    # xu500_ids = RewardList.where(reward_type_id: RewardType.where(name: '500xu').pluck(:id)).limit(20).pluck(:id)
-    # xu700_ids = RewardList.where(reward_type_id: RewardType.where(name: '700xu').pluck(:id)).limit(15).pluck(:id)
-    # hat_ids = RewardList.where(reward_type_id: RewardType.where(name: 'realme-hat').pluck(:id)).limit(10).pluck(:id)
-    # failed_ids = (1000000...1000025).to_a # 25
-    # total = [phone_and_headphone_ids, xu100_ids, xu500_ids, xu700_ids, hat_ids, failed_ids].flatten
-    # total.sample
-    # random_number = total.sample
-    so_random = RandomNumber&.first
-    @current_user.update(lives: (@current_user.lives - 1 ))
-    if so_random.nil?
-      failed_reward_type = RewardType.where(name: 'failed')&.first
-      Reward.create(reward_number: 100000000,
-                    description: 'failed',
-                    reward_type_id: failed_reward_type.id,
-                    user_id: @current_user.id)
-      return render json: {
-          is_sucess: true,
-          data: {
-              is_trung_thuong: false,
-              message: 'Chúc bạn may mắn lần sau',
-              type: 'failed'
-          }
-      }
+    if game_params[:game_2].present?
+      @current_user.update(game_2: game_params[:game_2])
     end
-    random_number = so_random&.number
-    so_random.delete
-    # random_number = rand(600000)
-    so_trung_thuong = RewardList.where(random_number: random_number)&.first
-
-    unless so_trung_thuong.nil?
-      Reward.create(reward_number: random_number,
-                    description: so_trung_thuong.reward_type.name,
-                    reward_type_id: so_trung_thuong.reward_type_id,
-                    user_id: @current_user.id)
-      type = so_trung_thuong.reward_type.name
-      if (so_trung_thuong.reward_type.name == 'realme-hat' || so_trung_thuong.reward_type.name == 'realme-phone' || so_trung_thuong.reward_type.name == 'realme-headphone')
-        so_trung_thuong.delete
-      else
-        added_coin = 0
-        if so_trung_thuong.reward_type.name == '100xu'
-          added_coin = 100
-        elsif  so_trung_thuong.reward_type.name == '500xu'
-          added_coin = 500
-        else
-          added_coin = 700
-        end
-        @current_user.update(coin: (@current_user.coin + added_coin))
-      end
-      render json: {
-        is_sucess: true,
-        data: {
-            is_trung_thuong: true,
-            message: "Bạn đã trúng #{type}",
-            type: type
-        }
-      }
-    else
-      failed_reward_type = RewardType.where(name: 'failed')&.first
-      Reward.create(reward_number: random_number,
-                    description: 'failed',
-                    reward_type_id: failed_reward_type.id,
-                    user_id: @current_user.id)
-      render json: {
-        is_sucess: true,
-        data: {
-            is_trung_thuong: false,
-            message: 'Chúc bạn may mắn lần sau',
-            type: 'failed'
-        }
-      }
+    if game_params[:game_3].present?
+      @current_user.update(game_3: game_params[:game_3])
     end
-  end
-
-  def history
-    histories = Reward.where(user_id: @current_user.id).order(created_at: :desc)
-    render json: {
-        data: {
-            histories: histories
-        }
-    }
-  end
-
-  def top5_recent_winner
-    top5 = Reward.joins(:reward_type, :user)
-        .where(reward_type_id: RewardType.where(name: ['realme-hat', 'realme-phone', 'realme-headphone']).pluck(:id))
-        .order("reward_types.priority ASC, rewards.created_at DESC").limit(5)
-    data = []
-    top5.each do |v|
-      phone = v.user&.phone_number
-      phone[0..3] = "xxxx"
-      data << {
-          name: v.user&.name,
-          phone: phone,
-          email: v.user&.email,
-          type: v.reward_type.name,
-          created_at: v.created_at
-      }
+    if game_params[:game_5].present?
+      @current_user.update(game_5: game_params[:game_5])
     end
     render json: {
-        data: data
+        data: {
+            user: @current_user
+        }
     }
   end
 
   private
 
   def user_params
-    params.permit(:email, :phone_number, :name, :is_received_email)
+    params.permit(:email, :phone_number, :username, :is_received_email)
+  end
+
+  def game_params
+    params.permit(:game_1, :game_2, :game_3, :game_5)
   end
 
   def auth_params
-    params.permit(:login)
+    params.permit(:login, :password)
   end
 
   def authorize_request
