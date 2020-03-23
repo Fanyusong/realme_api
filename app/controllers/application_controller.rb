@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::API
-  before_action :authorize_request, only: [:me, :sharing, :update_game_score, :quay_so, :history, :change_coin_to_live]
+  before_action :authorize_request, only: [:me, :sharing, :game_1, :game_2, :game_3, :game_4, :game_5, :buy_ticket]
   attr_reader :current_user
   include ExceptionHandler
 
@@ -109,20 +109,70 @@ class ApplicationController < ActionController::API
     }
   end
 
-  def update_game_score
-    if game_params[:game_1].present?
-      @current_user.update(game_1: game_params[:game_1])
-    end
-    if game_params[:game_2].present?
-      @current_user.update(game_2: game_params[:game_2])
-    end
-    if game_params[:game_3].present?
-      @current_user.update(game_3: game_params[:game_3])
-    end
-    if game_params[:game_5].present?
-      @current_user.update(game_5: game_params[:game_5])
+  def game_1
+    @current_user.update(game_1: true, coin: @current_user.coin + 100)
+    render json: {
+        data: {
+            user: @current_user
+        }
+    }
+  end
+
+  def game_2
+    @current_user.update(game_2: true, coin: @current_user.coin + 100)
+    render json: {
+        data: {
+            user: @current_user
+        }
+    }
+  end
+
+  def game_3
+    @current_user.update(game_3: true, coin: @current_user.coin + 100)
+    render json: {
+        data: {
+            user: @current_user
+        }
+    }
+  end
+
+  def game_4
+    if params[:time]
+      @current_user.update(game_4_time: params[:time], coin: @current_user.coin + 100)
     end
     render json: {
+        data: {
+            user: @current_user
+        }
+    }
+  end
+
+  def game_5
+    @current_user.update(game_5: true, coin: @current_user.coin + 100)
+    render json: {
+        data: {
+            user: @current_user
+        }
+    }
+  end
+
+  def buy_ticket
+    if params[:ticket_type] == 1 && @current_user.coin >= 100
+      @current_user.update(ticket_type_1: @current_user.ticket_type_1 + 1, coin: @current_user.coin - 100)
+    elsif params[:ticket_type] == 2 && @current_user.coin >= 50
+      @current_user.update(ticket_type_2: @current_user.ticket_type_2 + 1, coin: @current_user.coin - 50)
+    elsif params[:ticket_type] == 3 && @current_user.coin >= 20
+      @current_user.update(ticket_type_3: @current_user.ticket_type_3 + 1, coin: @current_user.coin - 20)
+    else
+      return render json: {
+          is_success: false,
+          data: {
+              user: @current_user
+          }
+      }
+    end
+    render json: {
+        is_success: true,
         data: {
             user: @current_user
         }
