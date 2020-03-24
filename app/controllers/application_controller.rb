@@ -110,6 +110,13 @@ class ApplicationController < ActionController::API
   end
 
   def game_1
+    if @current_user.game_1
+      return render json: {
+          data: {
+              user: @current_user
+          }
+      }
+    end
     @current_user.update(game_1: true, coin: @current_user.coin + 100)
     render json: {
         data: {
@@ -119,6 +126,13 @@ class ApplicationController < ActionController::API
   end
 
   def game_2
+    if @current_user.game_2
+      return render json: {
+          data: {
+              user: @current_user
+          }
+      }
+    end
     @current_user.update(game_2: true, coin: @current_user.coin + 100)
     render json: {
         data: {
@@ -128,6 +142,13 @@ class ApplicationController < ActionController::API
   end
 
   def game_3
+    if @current_user.game_3
+      return render json: {
+          data: {
+              user: @current_user
+          }
+      }
+    end
     @current_user.update(game_3: true, coin: @current_user.coin + 100)
     render json: {
         data: {
@@ -148,6 +169,13 @@ class ApplicationController < ActionController::API
   end
 
   def game_5
+    if @current_user.game_5
+      return render json: {
+          data: {
+              user: @current_user
+          }
+      }
+    end
     @current_user.update(game_5: true, coin: @current_user.coin + 100)
     render json: {
         data: {
