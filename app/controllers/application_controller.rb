@@ -207,6 +207,15 @@ class ApplicationController < ActionController::API
     }
   end
 
+  def top_gamers
+    @top_gamers = User.all.select(:id, :email, :phone_number).order(game_4_time: :asc).limit(params[:limit] || 5)
+    render json: {
+        data: {
+            top_gamers: @top_gamers
+        }
+    }
+  end
+
   private
 
   def user_params

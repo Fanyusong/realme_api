@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get 'count_user', to: 'application#count_user'
   get 'change_coin_to_live', to: 'application#change_coin_to_live'
   get 'sharing', to: 'application#sharing'
+  get 'top_gamers', to: 'application#top_gamers'
 
   root to: "application#home"
   # match '*unmatched', to: 'application#route_not_found', via: :all
