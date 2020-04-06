@@ -208,7 +208,7 @@ class ApplicationController < ActionController::API
   end
 
   def top_gamers
-    @top_gamers = User.where("game_4_time > 0").select(:id, :username, :email, :phone_number, :game_4_time).order(game_4_time: :asc).limit(params[:limit] || 5)
+    @top_gamers = User.where("game_4_time > 0").select(:id, :name, :email, :phone_number, :game_4_time).order(game_4_time: :asc).limit(params[:limit] || 5)
     render json: {
         data: {
             top_gamers: @top_gamers
