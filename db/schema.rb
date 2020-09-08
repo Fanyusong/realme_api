@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_08_092949) do
+ActiveRecord::Schema.define(version: 2020_09_08_174134) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,31 +47,28 @@ ActiveRecord::Schema.define(version: 2020_09_08_092949) do
     t.string "phone_number"
     t.string "name"
     t.text "address"
-    t.text "game_1"
-    t.text "game_2"
     t.boolean "is_received_email", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "identify"
-    t.integer "lives", default: 1
     t.date "sharing_day"
-    t.integer "coin", default: 0
     t.string "password"
-    t.string "username"
-    t.text "game_3"
-    t.boolean "game_5", default: false
-    t.float "game_1_float", default: 0.0
-    t.float "game_2_float", default: 0.0
-    t.float "game_3_float", default: 0.0
-    t.float "game_4_float", default: 0.0
-    t.float "total", default: 0.0
-    t.text "game_4"
-    t.float "total_time", default: 0.0
     t.integer "rank"
-    t.float "prev_game1", default: 0.0
-    t.float "prev_game2", default: 0.0
-    t.float "prev_game3", default: 0.0
-    t.float "prev_game4", default: 0.0
+    t.integer "current_total_time", default: 0
+    t.boolean "is_qualified", default: false
+    t.integer "total_time", default: 120000
+    t.integer "game_1"
+    t.integer "game_2"
+    t.integer "game_3"
+    t.integer "game_4"
+    t.integer "prev_game_1", default: 30000
+    t.integer "prev_game_2", default: 30000
+    t.integer "prev_game_3", default: 30000
+    t.integer "prev_game_4", default: 30000
+    t.integer "game_1_lives", default: 2
+    t.integer "game_2_lives", default: 2
+    t.integer "game_3_lives", default: 2
+    t.integer "game_4_lives", default: 2
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["phone_number"], name: "index_users_on_phone_number", unique: true
   end
