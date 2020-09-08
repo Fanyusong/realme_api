@@ -23,19 +23,19 @@ class ApplicationController < ActionController::API
     user = User.new
     if user_params[:email].blank?
       return render json: {
-          data: {
-              messages: 'Missing params email!',
-              error_code: 101
-          }
-      }, status: 422
+        error: 101,
+        is_success: false,
+        data: nil,
+        message: 'Missing params Email!',
+      }
     end
     if user_params[:phone_number].blank?
       return render json: {
-          data: {
-              messages: 'Missing params phone number!',
-              error_code: 102
-          }
-      }, status: 422
+        error: 101,
+        is_success: false,
+        data: nil,
+        message: 'Missing params phone number!',
+      }
     end
     user.email = user_params[:email].strip
     user.phone_number = user_params[:phone_number].strip
@@ -44,14 +44,17 @@ class ApplicationController < ActionController::API
     if user.save
       data = AuthenticateUser.new(user.phone_number, user.password).call
       render json: {
-          data: data.result
-      }, status: 200
+          data: data.result,
+          is_success: true,
+          error: nil
+      }
     else
       render json: {
-          data: {
-              messages: user.errors.full_messages
-          }
-      }, status: 422
+        error: 103,
+        is_success: false,
+        data: nil,
+        message: user.errors.full_messages
+      }
     end
   end
 
@@ -62,7 +65,9 @@ class ApplicationController < ActionController::API
   def sign_in
     data = AuthenticateUser.new(auth_params[:login], auth_params[:password]).call
     render json: {
-      data: data.result
+      data: data.result,
+      is_success: true,
+      error: nil
     }
   end
 
@@ -156,7 +161,9 @@ class ApplicationController < ActionController::API
     render json: {
       data: {
           top_gamers: @top_gamers
-      }
+      },
+      is_success: true,
+      error: nil
     }
   end
 
@@ -165,7 +172,9 @@ class ApplicationController < ActionController::API
     render json: {
         data: {
             total_users: total
-        }
+        },
+        is_success: true,
+        error: nil
     }
   end
 
@@ -185,24 +194,16 @@ class ApplicationController < ActionController::API
 
   def authorize_request
     @current_user = AuthorizeApiRequest.new(request.headers).call.result
-    render json: { message: 'Not Authorized' }, status: 401 unless @current_user
+    render json: { is_success: false, data: nil, error: 401, message: 'Not Authorized' } unless @current_user
   end
 
   def render_success
     render json: {
         is_success: true,
         data: {
-            user: {
-                email: @current_user.email,
-                phone_number: @current_user.phone_number,
-                game_1: @current_user.game_1,
-                game_2: @current_user.game_2,
-                game_3: @current_user.game_3,
-                game_4: @current_user.game_4,
-                total_time: @current_user.total_time
-            }
-        }
+            user: @current_user.serialize_user_data
+        },
+        error: nil
     }
   end
-
 end

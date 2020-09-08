@@ -10,7 +10,7 @@ class AuthenticateUser
     if user
       {
         token: JsonWebToken.encode(user_id: user.id),
-        user: user
+        user: user.serialize_user_data
       }
     end
   end
