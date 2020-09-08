@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_07_082442) do
+ActiveRecord::Schema.define(version: 2020_09_08_092949) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,7 +66,7 @@ ActiveRecord::Schema.define(version: 2020_09_07_082442) do
     t.float "game_4_float", default: 0.0
     t.float "total", default: 0.0
     t.text "game_4"
-    t.float "total_time"
+    t.float "total_time", default: 0.0
     t.integer "rank"
     t.float "prev_game1", default: 0.0
     t.float "prev_game2", default: 0.0
