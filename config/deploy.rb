@@ -1,5 +1,4 @@
 # config valid for current version and patch releases of Capistrano
-lock "~> 3.11.0"
 ENV.update YAML.load_file(File.join(File.dirname(__FILE__), 'config.yml'))
 set :stages, %w(production staging)
 set :repo_url,        ENV['REALME_API_REPO_URL']

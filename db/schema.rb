@@ -10,9 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_16_164645) do
+ActiveRecord::Schema.define(version: 2020_09_07_082442) do
 
-  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -22,7 +25,7 @@ ActiveRecord::Schema.define(version: 2019_09_16_164645) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "active_storage_blobs", force: :cascade do |t|
     t.string "key", null: false
     t.string "filename", null: false
     t.string "content_type"
@@ -33,42 +36,42 @@ ActiveRecord::Schema.define(version: 2019_09_16_164645) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "errors", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "errors", force: :cascade do |t|
     t.text "message"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "posts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "name"
-    t.string "email"
-    t.string "phone_number"
-    t.string "avatar"
-    t.text "content"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "user_id"
-    t.text "title"
-    t.boolean "is_ok", default: false
-    t.index ["user_id"], name: "index_posts_on_user_id"
-  end
-
-  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "users", force: :cascade do |t|
     t.string "email"
     t.string "phone_number"
     t.string "name"
     t.text "address"
-    t.boolean "game_1", default: false
-    t.boolean "game_2", default: false
-    t.boolean "game_3", default: false
+    t.text "game_1"
+    t.text "game_2"
     t.boolean "is_received_email", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "identify"
-    t.integer "lives", default: 3
+    t.integer "lives", default: 1
     t.date "sharing_day"
-    t.boolean "game_4", default: false
+    t.integer "coin", default: 0
+    t.string "password"
+    t.string "username"
+    t.text "game_3"
     t.boolean "game_5", default: false
+    t.float "game_1_float", default: 0.0
+    t.float "game_2_float", default: 0.0
+    t.float "game_3_float", default: 0.0
+    t.float "game_4_float", default: 0.0
+    t.float "total", default: 0.0
+    t.text "game_4"
+    t.float "total_time"
+    t.integer "rank"
+    t.float "prev_game1", default: 0.0
+    t.float "prev_game2", default: 0.0
+    t.float "prev_game3", default: 0.0
+    t.float "prev_game4", default: 0.0
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["phone_number"], name: "index_users_on_phone_number", unique: true
   end

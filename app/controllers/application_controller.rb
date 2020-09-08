@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::API
-  before_action :authorize_request, only: [:me, :sharing, :game_1, :game_2, :game_3, :game_4, :game_5, :buy_ticket]
-  attr_reader :current_user
   include ExceptionHandler
+  before_action :authorize_request, only: [:me, :game_1, :game_2, :game_3, :game_4]
+  attr_reader :current_user
 
   def home
     render json: {
@@ -21,10 +21,19 @@ class ApplicationController < ActionController::API
 
   def register
     user = User.new
-    if (user_params[:email].blank? || user_params[:phone_number].blank?)
-      render json: {
+    if user_params[:email].blank?
+      return render json: {
           data: {
-              messages: 'Missing params email or phone number!'
+              messages: 'Missing params email!',
+              error_code: 101
+          }
+      }, status: 422
+    end
+    if user_params[:phone_number].blank?
+      return render json: {
+          data: {
+              messages: 'Missing params phone number!',
+              error_code: 102
           }
       }, status: 422
     end
@@ -47,11 +56,7 @@ class ApplicationController < ActionController::API
   end
 
   def me
-    render json: {
-        data: {
-            user: @current_user
-        }
-    }
+    render_success
   end
 
   def sign_in
@@ -59,26 +64,6 @@ class ApplicationController < ActionController::API
     render json: {
       data: data.result
     }
-  end
-
-  def change_coin_to_live
-    live_number = @current_user.coin / 1000
-    if live_number >= 1
-      remain_coin = @current_user.coin - (live_number * 1000)
-      @current_user.update(lives: live_number, coin: remain_coin)
-      render json: {
-          is_success: true,
-          data: {
-              lives: @current_user.lives,
-              coin: @current_user.coin
-          }
-      }
-    else
-      render json: {
-          is_success: false,
-          message: 'Bạn không có đủ số xu để đổi 1 lượt quay'
-      }
-    end
   end
 
   def sharing
@@ -103,115 +88,83 @@ class ApplicationController < ActionController::API
     end
   end
 
-  def count_user
-    render json: {
-        total_user: User.all.count
-    }
-  end
-
   def game_1
-    if @current_user.game_1
-      return render json: {
-          data: {
-              user: @current_user
-          }
-      }
+    if params[:game_1] =~ /[0-9]*\.?[0-9]+\Z/
+      is_update = if @current_user.game_1_float > 0
+                    params[:game_1]&.to_f < @current_user.prev_game1
+                  else
+                    true
+                  end
+      @current_user.update(game_1: params[:game_1]&.to_f,
+                           game_1_float: params[:game_1]&.to_f,
+                           prev_game1: params[:game_1]&.to_f,
+                           total_time: @current_user.total_time + params[:game_1]&.to_f - @current_user.prev_game1) if is_update
     end
-    @current_user.update(game_1: true, coin: @current_user.coin + 100)
-    render json: {
-        data: {
-            user: @current_user
-        }
-    }
+    render_success
   end
 
   def game_2
-    if @current_user.game_2
-      return render json: {
-          data: {
-              user: @current_user
-          }
-      }
+    if params[:game_2] =~ /[0-9]*\.?[0-9]+\Z/
+      is_update = if @current_user.game_2_float > 0
+                    params[:game_2]&.to_f < @current_user.prev_game2
+                  else
+                    true
+                  end
+      @current_user.update(game_2: params[:game_2]&.to_f,
+                           game_2_float: params[:game_2]&.to_f,
+                           prev_game2: params[:game_2]&.to_f,
+                           total_time: @current_user.total_time + params[:game_2]&.to_f - @current_user.prev_game2) if is_update
     end
-    @current_user.update(game_2: true, coin: @current_user.coin + 100)
-    render json: {
-        data: {
-            user: @current_user
-        }
-    }
+    render_success
   end
 
   def game_3
-    if @current_user.game_3
-      return render json: {
-          data: {
-              user: @current_user
-          }
-      }
+    if params[:game_3] =~ /[0-9]*\.?[0-9]+\Z/
+      is_update = if @current_user.game_3_float > 0
+                    params[:game_3]&.to_f < @current_user.prev_game3
+                  else
+                    true
+                  end
+      @current_user.update(game_3: params[:game_3]&.to_f,
+                           game_3_float: params[:game_3]&.to_f,
+                           prev_game3: params[:game_3]&.to_f,
+                           total_time: @current_user.total_time + params[:game_3]&.to_f - @current_user.prev_game3) if is_update
     end
-    @current_user.update(game_3: true, coin: @current_user.coin + 100)
-    render json: {
-        data: {
-            user: @current_user
-        }
-    }
+    render_success
   end
 
   def game_4
-    if params[:time]
-      @current_user.update(game_4_time: params[:time], coin: @current_user.coin + 100)
+    if params[:game_4] =~ /[0-9]*\.?[0-9]+\Z/
+      is_update = if @current_user.game_4_float > 0
+        params[:game_4]&.to_f < @current_user.prev_game4
+      else
+        true
+      end
+      @current_user.update(game_4: params[:game_4]&.to_f,
+                           game_4_float: params[:game_4]&.to_f,
+                           prev_game4: params[:game_4]&.to_f,
+                           total_time: @current_user.total_time + params[:game_4]&.to_f - @current_user.prev_game4) if is_update
     end
-    render json: {
-        data: {
-            user: @current_user
-        }
-    }
-  end
-
-  def game_5
-    if @current_user.game_5
-      return render json: {
-          data: {
-              user: @current_user
-          }
-      }
-    end
-    @current_user.update(game_5: true, coin: @current_user.coin + 100)
-    render json: {
-        data: {
-            user: @current_user
-        }
-    }
-  end
-
-  def buy_ticket
-    if params[:ticket_type] == 1 && @current_user.coin >= 100
-      @current_user.update(ticket_type_1: @current_user.ticket_type_1 + 1, coin: @current_user.coin - 100)
-    elsif params[:ticket_type] == 2 && @current_user.coin >= 50
-      @current_user.update(ticket_type_2: @current_user.ticket_type_2 + 1, coin: @current_user.coin - 50)
-    elsif params[:ticket_type] == 3 && @current_user.coin >= 20
-      @current_user.update(ticket_type_3: @current_user.ticket_type_3 + 1, coin: @current_user.coin - 20)
-    else
-      return render json: {
-          is_success: false,
-          data: {
-              user: @current_user
-          }
-      }
-    end
-    render json: {
-        is_success: true,
-        data: {
-            user: @current_user
-        }
-    }
+    render_success
   end
 
   def top_gamers
-    @top_gamers = User.where("game_4_time > 0").select(:id, :name, :email, :phone_number, :game_4_time).order(game_4_time: :asc).limit(params[:limit] || 5)
+    @top_gamers = User.where("total_time > 0")
+                      .order(total_time: :desc)
+                      .select(:id, :name, :email, :phone_number, :total_time)
+                      .limit(params[:limit] || 10)
+    render json: {
+      data: {
+          top_gamers: @top_gamers
+      }
+    }
+  end
+
+  def total_users
+    total = User.count
     render json: {
         data: {
-            top_gamers: @top_gamers
+            total_users: total
         }
     }
   end
@@ -223,7 +176,7 @@ class ApplicationController < ActionController::API
   end
 
   def game_params
-    params.permit(:game_1, :game_2, :game_3, :game_5)
+    params.permit(:game_1, :game_2, :game_3, :game_4)
   end
 
   def auth_params
@@ -233,6 +186,23 @@ class ApplicationController < ActionController::API
   def authorize_request
     @current_user = AuthorizeApiRequest.new(request.headers).call.result
     render json: { message: 'Not Authorized' }, status: 401 unless @current_user
+  end
+
+  def render_success
+    render json: {
+        is_success: true,
+        data: {
+            user: {
+                email: @current_user.email,
+                phone_number: @current_user.phone_number,
+                game_1: @current_user.game_1,
+                game_2: @current_user.game_2,
+                game_3: @current_user.game_3,
+                game_4: @current_user.game_4,
+                total_time: @current_user.total_time
+            }
+        }
+    }
   end
 
 end
