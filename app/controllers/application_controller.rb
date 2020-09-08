@@ -90,7 +90,7 @@ class ApplicationController < ActionController::API
   end
 
   def game_1
-    return render_error(104, "You lives in game 1 is 0") unless @current_user.game_1_lives > 0
+    return render_error(104, "Your lives in game 1 is 0") unless @current_user.game_1_lives > 0
     if params[:game_1]&.to_i > 100
       is_update = params[:game_1]&.to_i < @current_user.prev_game_1
       is_qualified = ENV['GAME2'] == @current_user.game_2.present?.to_s && ENV['GAME3'] == @current_user.game_3.present?.to_s && ENV['GAME4'] == @current_user.game_4.present?.to_s
@@ -117,7 +117,7 @@ class ApplicationController < ActionController::API
   end
 
   def game_2
-    return render_error(105, "You lives in game 2 is 0") unless @current_user.game_2_lives > 0
+    return render_error(105, "Your lives in game 2 is 0") unless @current_user.game_2_lives > 0
     if params[:game_2]&.to_i > 100
       is_update = params[:game_2]&.to_i < @current_user.prev_game_2
       is_qualified = ENV['GAME1'] == @current_user.game_1.present?.to_s && ENV['GAME3'] == @current_user.game_3.present?.to_s && ENV['GAME4'] == @current_user.game_4.present?.to_s
@@ -144,7 +144,7 @@ class ApplicationController < ActionController::API
   end
 
   def game_3
-    return render_error(106, "You lives in game 3 is 0") unless @current_user.game_3_lives > 0
+    return render_error(106, "Your lives in game 3 is 0") unless @current_user.game_3_lives > 0
     if params[:game_3]&.to_i > 100
       is_update = params[:game_3]&.to_i < @current_user.prev_game_3
       is_qualified = ENV['GAME1'] == @current_user.game_1.present?.to_s && ENV['GAME2'] == @current_user.game_2.present?.to_s && ENV['GAME4'] == @current_user.game_4.present?.to_s
@@ -171,7 +171,7 @@ class ApplicationController < ActionController::API
   end
 
   def game_4
-    return render_error(107, "You lives in game 4 is 0") unless @current_user.game_4_lives > 0
+    return render_error(107, "Your lives in game 4 is 0") unless @current_user.game_4_lives > 0
     if params[:game_4]&.to_i > 100
       is_update = params[:game_4]&.to_i < @current_user.prev_game_4
       is_qualified = ENV['GAME1'] == @current_user.game_1.present?.to_s && ENV['GAME2'] == @current_user.game_2.present?.to_s && ENV['GAME3'] == @current_user.game_3.present?.to_s
