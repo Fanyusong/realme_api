@@ -225,7 +225,7 @@ class ApplicationController < ActionController::API
   def current_rank
     result = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, current_total_time, email FROM top_gamers WHERE top_gamers.id = #{@current_user.id}").to_a
     if result&.first["row_number"] > 9
-      top4_above = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, email, current_total_time FROM top_gamers LIMIT 9 OFFSET #{result&.first["row_number"] - 9}").to_a
+      top4_above = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, email, current_total_time FROM top_gamers LIMIT 9 OFFSET #{result&.first["row_number"] - 10}").to_a
       top4_below = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, email, current_total_time FROM top_gamers LIMIT 9 OFFSET #{result&.first["row_number"]}").to_a
     else
       top4_above = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, email, current_total_time FROM top_gamers LIMIT #{result&.first["row_number"] - 1} OFFSET 0").to_a
