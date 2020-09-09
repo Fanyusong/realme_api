@@ -257,7 +257,7 @@ class ApplicationController < ActionController::API
                 id: result&.first["id"],
                 name: result&.first["name"],
                 email: result&.first["email"],
-                total_time: result&.first["total_time"],
+                total_time: result&.first["current_total_time"],
                 rank: result&.first["row_number"]
             },
             above: above,
