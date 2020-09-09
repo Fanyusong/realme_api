@@ -223,10 +223,46 @@ class ApplicationController < ActionController::API
   end
 
   def current_rank
-    result = ActiveRecord::Base.connection.exec_query("SELECT row_number FROM (SELECT id, total_time, ROW_NUMBER () OVER (ORDER BY total_time ASC) FROM users) A WHERE A.id = #{@current_user.id}").to_a
+    result = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, total_time, email FROM top_gamers WHERE top_gamers.id = #{@current_user.id}").to_a
+    if result&.first["row_number"] > 5
+      top4_above = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, email, total_time FROM top_gamers LIMIT 4 OFFSET #{result&.first["row_number"] - 4}").to_a
+      top4_below = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, email, total_time FROM top_gamers LIMIT 4 OFFSET #{result&.first["row_number"]}").to_a
+    else
+      top4_above = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, email, total_time FROM top_gamers LIMIT 4 OFFSET 0").to_a
+      top4_below = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, email, total_time FROM top_gamers LIMIT 4 OFFSET 5").to_a
+    end
+    below = []
+    above = []
+    top4_above.each do |v|
+      above << {
+          id: v["id"],
+          name: v["name"],
+          email: v["email"],
+          total_time: v["total_time"],
+          rank: v["row_number"]
+      }
+    end
+    top4_below.each do |v|
+      below << {
+          id: v["id"],
+          name: v["name"],
+          email: v["email"],
+          total_time: v["total_time"],
+          rank: v["row_number"]
+      }
+    end
     render json: {
         data: {
-            rank: result&.first["row_number"]
+            current: {
+                id: result&.first["id"],
+                name: result&.first["name"],
+                email: result&.first["email"],
+                total_time: result&.first["total_time"],
+                rank: result&.first["row_number"]
+            },
+            above: above,
+            below: below
+
         },
         is_success: true,
         error: nil
