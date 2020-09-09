@@ -201,7 +201,7 @@ class ApplicationController < ActionController::API
     @top_gamers = User.where(is_qualified: true)
                       .order(total_time: :asc)
                       .select(:id, :name, :email, :phone_number, :current_total_time)
-                      .limit(20)
+                      .limit(10)
     render json: {
         data: {
             top_gamers: @top_gamers
