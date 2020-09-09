@@ -224,12 +224,12 @@ class ApplicationController < ActionController::API
 
   def current_rank
     result = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, total_time, email FROM top_gamers WHERE top_gamers.id = #{@current_user.id}").to_a
-    if result&.first["row_number"] > 5
-      top4_above = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, email, total_time FROM top_gamers LIMIT 4 OFFSET #{result&.first["row_number"] - 4}").to_a
+    if result&.first["row_number"] > 4
+      top4_above = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, email, total_time FROM top_gamers LIMIT 4 OFFSET #{result&.first["row_number"] - 5}").to_a
       top4_below = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, email, total_time FROM top_gamers LIMIT 4 OFFSET #{result&.first["row_number"]}").to_a
     else
-      top4_above = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, email, total_time FROM top_gamers LIMIT 4 OFFSET 0").to_a
-      top4_below = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, email, total_time FROM top_gamers LIMIT 4 OFFSET 5").to_a
+      top4_above = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, email, total_time FROM top_gamers LIMIT #{result&.first["row_number"] - 1} OFFSET 0").to_a
+      top4_below = ActiveRecord::Base.connection.exec_query("SELECT id, row_number, name, email, total_time FROM top_gamers LIMIT 4 OFFSET 4").to_a
     end
     below = []
     above = []
