@@ -28,7 +28,8 @@ class User < ApplicationRecord
             best_time: self&.game_4
         },
         is_qualified: self.is_qualified,
-        current_total_time: self.current_total_time
+        current_total_time: self.current_total_time,
+        sharing_day: self.sharing_day
     }
   end
 end
