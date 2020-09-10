@@ -91,7 +91,7 @@ class ApplicationController < ActionController::API
 
   def game_1
     return render_error(104, "Your lives in game 1 is 0") unless @current_user.game_1_lives > 0
-    if params[:game_1]&.to_i > 100
+    if params[:game_1]&.to_i > 750
       is_qualified = ENV['GAME2'] == @current_user.game_2.present?.to_s && ENV['GAME3'] == @current_user.game_3.present?.to_s && ENV['GAME4'] == @current_user.game_4.present?.to_s
       if @current_user.game_1.nil?
         @current_user.update(game_1: params[:game_1]&.to_i,
