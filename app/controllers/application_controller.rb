@@ -92,14 +92,8 @@ class ApplicationController < ActionController::API
   def game_1
     return render_error(104, "Your lives in game 1 is 0") unless @current_user.game_1_lives > 0
     if params[:game_1]&.to_i > 100
-      is_update = params[:game_1]&.to_i < @current_user.prev_game_1
       is_qualified = ENV['GAME2'] == @current_user.game_2.present?.to_s && ENV['GAME3'] == @current_user.game_3.present?.to_s && ENV['GAME4'] == @current_user.game_4.present?.to_s
-      if is_update
-        current_total_time = if @current_user.game_1.nil?
-                               @current_user.current_total_time + params[:game_1]&.to_i
-                             else
-                               @current_user.current_total_time + params[:game_1]&.to_i - @current_user.prev_game_1
-                             end
+      if @current_user.game_1.nil?
         @current_user.update(game_1: params[:game_1]&.to_i,
                              prev_game_1: params[:game_1]&.to_i,
                              total_time: @current_user.total_time + params[:game_1]&.to_i - @current_user.prev_game_1,
@@ -107,7 +101,22 @@ class ApplicationController < ActionController::API
                              is_qualified: is_qualified,
                              game_1_lives: @current_user.game_1_lives - 1)
       else
-        @current_user.update(game_1_lives: @current_user.game_1_lives - 1, is_qualified: is_qualified)
+        is_update = params[:game_1]&.to_i < @current_user.prev_game_1
+        if is_update
+          current_total_time = if @current_user.game_1.nil?
+                                 @current_user.current_total_time + params[:game_1]&.to_i
+                               else
+                                 @current_user.current_total_time + params[:game_1]&.to_i - @current_user.prev_game_1
+                               end
+          @current_user.update(game_1: params[:game_1]&.to_i,
+                               prev_game_1: params[:game_1]&.to_i,
+                               total_time: @current_user.total_time + params[:game_1]&.to_i - @current_user.prev_game_1,
+                               current_total_time: current_total_time,
+                               is_qualified: is_qualified,
+                               game_1_lives: @current_user.game_1_lives - 1)
+        else
+          @current_user.update(game_1_lives: @current_user.game_1_lives - 1, is_qualified: is_qualified)
+        end
       end
       @current_user.reload
       render_success
