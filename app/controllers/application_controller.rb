@@ -97,21 +97,16 @@ class ApplicationController < ActionController::API
         @current_user.update(game_1: params[:game_1]&.to_i,
                              prev_game_1: params[:game_1]&.to_i,
                              total_time: @current_user.total_time + params[:game_1]&.to_i - @current_user.prev_game_1,
-                             current_total_time: current_total_time,
+                             current_total_time: @current_user.current_total_time + params[:game_1]&.to_i,
                              is_qualified: is_qualified,
                              game_1_lives: @current_user.game_1_lives - 1)
       else
         is_update = params[:game_1]&.to_i < @current_user.prev_game_1
         if is_update
-          current_total_time = if @current_user.game_1.nil?
-                                 @current_user.current_total_time + params[:game_1]&.to_i
-                               else
-                                 @current_user.current_total_time + params[:game_1]&.to_i - @current_user.prev_game_1
-                               end
           @current_user.update(game_1: params[:game_1]&.to_i,
                                prev_game_1: params[:game_1]&.to_i,
                                total_time: @current_user.total_time + params[:game_1]&.to_i - @current_user.prev_game_1,
-                               current_total_time: current_total_time,
+                               current_total_time: @current_user.current_total_time + params[:game_1]&.to_i - @current_user.prev_game_1,
                                is_qualified: is_qualified,
                                game_1_lives: @current_user.game_1_lives - 1)
         else
