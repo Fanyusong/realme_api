@@ -78,10 +78,10 @@ class ApplicationController < ActionController::API
     end
     if @current_user.sharing_day.nil? || (compare_day && compare_day != DateTime.parse(Time.now.to_s).strftime("%Y-%m-%d"))
       @current_user.sharing_day = Date.today
-      @current_user.game_1_lives = @current_user.game_1_lives + 1 if ENV['GAME1'] == 'true'
-      @current_user.game_2_lives = @current_user.game_2_lives + 1 if ENV['GAME2'] == 'true'
-      @current_user.game_3_lives = @current_user.game_3_lives + 1 if ENV['GAME3'] == 'true'
-      @current_user.game_4_lives = @current_user.game_4_lives + 1 if ENV['GAME4'] == 'true'
+      @current_user.game_1_lives = @current_user.game_1_lives + 2 if ENV['GAME1'] == 'true'
+      @current_user.game_2_lives = @current_user.game_2_lives + 2 if ENV['GAME2'] == 'true'
+      @current_user.game_3_lives = @current_user.game_3_lives + 2 if ENV['GAME3'] == 'true'
+      @current_user.game_4_lives = @current_user.game_4_lives + 2 if ENV['GAME4'] == 'true'
       @current_user.save
       render_success
     else
@@ -91,7 +91,7 @@ class ApplicationController < ActionController::API
 
   def game_1
     return render_error(104, "Your lives in game 1 is 0") unless @current_user.game_1_lives > 0
-    if params[:game_1]&.to_i > 750
+    if params[:game_1]&.to_i > 1000
       is_qualified = ENV['GAME2'] == @current_user.game_2.present?.to_s && ENV['GAME3'] == @current_user.game_3.present?.to_s && ENV['GAME4'] == @current_user.game_4.present?.to_s
       if @current_user.game_1.nil?
         @current_user.update(game_1: params[:game_1]&.to_i,
@@ -122,23 +122,27 @@ class ApplicationController < ActionController::API
 
   def game_2
     return render_error(105, "Your lives in game 2 is 0") unless @current_user.game_2_lives > 0
-    if params[:game_2]&.to_i > 100
-      is_update = params[:game_2]&.to_i < @current_user.prev_game_2
+    if params[:game_2]&.to_i > 1000
       is_qualified = ENV['GAME1'] == @current_user.game_1.present?.to_s && ENV['GAME3'] == @current_user.game_3.present?.to_s && ENV['GAME4'] == @current_user.game_4.present?.to_s
-      if is_update
-        current_total_time = if @current_user.game_2.nil?
-                               @current_user.current_total_time + params[:game_2]&.to_i
-                             else
-                               @current_user.current_total_time + params[:game_2]&.to_i - @current_user.prev_game_2
-                             end
+      if @current_user.game_2.nil?
         @current_user.update(game_2: params[:game_2]&.to_i,
                              prev_game_2: params[:game_2]&.to_i,
                              total_time: @current_user.total_time + params[:game_2]&.to_i - @current_user.prev_game_2,
-                             current_total_time: current_total_time,
+                             current_total_time: @current_user.current_total_time + params[:game_2]&.to_i,
                              is_qualified: is_qualified,
                              game_2_lives: @current_user.game_2_lives - 1)
       else
-        @current_user.update(game_2_lives: @current_user.game_2_lives - 1, is_qualified: is_qualified)
+        is_update = params[:game_2]&.to_i < @current_user.prev_game_2
+        if is_update
+          @current_user.update(game_2: params[:game_2]&.to_i,
+                               prev_game_2: params[:game_2]&.to_i,
+                               total_time: @current_user.total_time + params[:game_2]&.to_i - @current_user.prev_game_2,
+                               current_total_time: @current_user.current_total_time + params[:game_2]&.to_i - @current_user.prev_game_2,
+                               is_qualified: is_qualified,
+                               game_2_lives: @current_user.game_2_lives - 1)
+        else
+          @current_user.update(game_2_lives: @current_user.game_2_lives - 1, is_qualified: is_qualified)
+        end
       end
       @current_user.reload
       render_success
@@ -149,23 +153,27 @@ class ApplicationController < ActionController::API
 
   def game_3
     return render_error(106, "Your lives in game 3 is 0") unless @current_user.game_3_lives > 0
-    if params[:game_3]&.to_i > 100
-      is_update = params[:game_3]&.to_i < @current_user.prev_game_3
+    if params[:game_3]&.to_i > 1000
       is_qualified = ENV['GAME1'] == @current_user.game_1.present?.to_s && ENV['GAME2'] == @current_user.game_2.present?.to_s && ENV['GAME4'] == @current_user.game_4.present?.to_s
-      if is_update
-        current_total_time = if @current_user.game_3.nil?
-                               @current_user.current_total_time + params[:game_3]&.to_i
-                             else
-                               @current_user.current_total_time + params[:game_3]&.to_i - @current_user.prev_game_3
-                             end
+      if @current_user.game_3.nil?
         @current_user.update(game_3: params[:game_3]&.to_i,
                              prev_game_3: params[:game_3]&.to_i,
                              total_time: @current_user.total_time + params[:game_3]&.to_i - @current_user.prev_game_3,
-                             current_total_time: current_total_time,
+                             current_total_time: @current_user.current_total_time + params[:game_3]&.to_i,
                              is_qualified: is_qualified,
                              game_3_lives: @current_user.game_3_lives - 1)
       else
-        @current_user.update(game_3_lives: @current_user.game_3_lives - 1, is_qualified: is_qualified)
+        is_update = params[:game_3]&.to_i < @current_user.prev_game_3
+        if is_update
+          @current_user.update(game_3: params[:game_3]&.to_i,
+                               prev_game_3: params[:game_3]&.to_i,
+                               total_time: @current_user.total_time + params[:game_3]&.to_i - @current_user.prev_game_3,
+                               current_total_time: @current_user.current_total_time + params[:game_3]&.to_i - @current_user.prev_game_3,
+                               is_qualified: is_qualified,
+                               game_3_lives: @current_user.game_3_lives - 1)
+        else
+          @current_user.update(game_3_lives: @current_user.game_3_lives - 1, is_qualified: is_qualified)
+        end
       end
       @current_user.reload
       render_success
@@ -176,23 +184,27 @@ class ApplicationController < ActionController::API
 
   def game_4
     return render_error(107, "Your lives in game 4 is 0") unless @current_user.game_4_lives > 0
-    if params[:game_4]&.to_i > 100
-      is_update = params[:game_4]&.to_i < @current_user.prev_game_4
+    if params[:game_4]&.to_i > 1000
       is_qualified = ENV['GAME1'] == @current_user.game_1.present?.to_s && ENV['GAME2'] == @current_user.game_2.present?.to_s && ENV['GAME3'] == @current_user.game_3.present?.to_s
-      if is_update
-        current_total_time = if @current_user.game_4.nil?
-                               @current_user.current_total_time + params[:game_4]&.to_i
-                             else
-                               @current_user.current_total_time + params[:game_4]&.to_i - @current_user.prev_game_4
-                             end
+      if @current_user.game_4.nil?
         @current_user.update(game_4: params[:game_4]&.to_i,
                              prev_game_4: params[:game_4]&.to_i,
                              total_time: @current_user.total_time + params[:game_4]&.to_i - @current_user.prev_game_4,
-                             current_total_time: current_total_time,
+                             current_total_time: @current_user.current_total_time + params[:game_4]&.to_i,
                              is_qualified: is_qualified,
                              game_4_lives: @current_user.game_4_lives - 1)
       else
-        @current_user.update(game_4_lives: @current_user.game_4_lives - 1, is_qualified: is_qualified)
+        is_update = params[:game_4]&.to_i < @current_user.prev_game_4
+        if is_update
+          @current_user.update(game_4: params[:game_4]&.to_i,
+                               prev_game_4: params[:game_4]&.to_i,
+                               total_time: @current_user.total_time + params[:game_4]&.to_i - @current_user.prev_game_4,
+                               current_total_time: @current_user.current_total_time + params[:game_4]&.to_i - @current_user.prev_game_4,
+                               is_qualified: is_qualified,
+                               game_4_lives: @current_user.game_4_lives - 1)
+        else
+          @current_user.update(game_4_lives: @current_user.game_4_lives - 1, is_qualified: is_qualified)
+        end
       end
       @current_user.reload
       render_success
