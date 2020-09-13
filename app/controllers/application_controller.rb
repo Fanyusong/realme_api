@@ -122,6 +122,11 @@ class ApplicationController < ActionController::API
 
   def game_2
     return render_error(105, "Your lives in game 2 is 0") unless @current_user.game_2_lives > 0
+    if params[:game_2].present?
+      return render_error(115, "Params is not correct") unless params[:game_2] =~ /^2e35f242a46d67eeb7(\d+)eeb74aabc37d5e5d05$/
+      params[:game_2] = params[:game_2].reverse
+      params[:game_2] = params[:game_2].gsub('2e35f242a46d67eeb7', '').gsub('eeb74aabc37d5e5d05', '')
+    end
     if params[:game_2]&.to_i > 1000
       is_qualified = ENV['GAME1'] == @current_user.game_1.present?.to_s && ENV['GAME3'] == @current_user.game_3.present?.to_s && ENV['GAME4'] == @current_user.game_4.present?.to_s
       if @current_user.game_2.nil?
