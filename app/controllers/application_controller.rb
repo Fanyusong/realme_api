@@ -229,7 +229,7 @@ class ApplicationController < ActionController::API
   end
 
   def top_gamers
-    @top_gamers = User.where(is_qualified: true)
+    @top_gamers = User.where(is_qualified: true, is_cheat: false)
                       .order(total_time: :asc)
                       .select(:id, :name, :email, :phone_number, :current_total_time)
                       .limit(15)
