@@ -29,7 +29,8 @@ class User < ApplicationRecord
         },
         is_qualified: self.is_qualified,
         current_total_time: self.current_total_time,
-        sharing_day: self.sharing_day
+        sharing_day: self.sharing_day,
+        is_cheat: self.is_cheat
     }
   end
 end
