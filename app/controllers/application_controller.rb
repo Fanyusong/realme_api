@@ -158,12 +158,12 @@ class ApplicationController < ActionController::API
 
   def game_3
     return render_error(106, "Your lives in game 3 is 0") unless @current_user.game_3_lives > 0
-    if params[:game_3].present?
-      return render_error(115, "Params is not correct") unless params[:game_3] =~ /^50d5e5d73cbaa47bee(\d+)7bee76d64a242f53e2$/
-      params[:game_3] = params[:game_3].reverse
-      params[:game_3] = params[:game_3].gsub('2e35f242a46d67eeb7', '').gsub('eeb74aabc37d5e5d05', '')
+    params[:game_3] = decrypt(params[:game_3]) if params[:game_3].present?
+    if params[:game_3].nil?
+      @current_user.update(is_cheat: true)
+      return render_error(110, "You will be banned if trying to cheat")
     end
-    if params[:game_3]&.to_i > 8000
+    if params[:game_3]&.to_i > 10000
       is_qualified = ENV['GAME1'] == @current_user.game_1.present?.to_s && ENV['GAME2'] == @current_user.game_2.present?.to_s && ENV['GAME4'] == @current_user.game_4.present?.to_s
       if @current_user.game_3.nil?
         @current_user.update(game_3: params[:game_3]&.to_i,
@@ -194,12 +194,12 @@ class ApplicationController < ActionController::API
 
   def game_4
     return render_error(107, "Your lives in game 4 is 0") unless @current_user.game_4_lives > 0
-    if params[:game_4].present?
-      return render_error(115, "Params is not correct") unless params[:game_4] =~ /^50d5e5d73cbaa47bee(\d+)7bee76d64a242f53e2$/
-      params[:game_4] = params[:game_4].reverse
-      params[:game_4] = params[:game_4].gsub('2e35f242a46d67eeb7', '').gsub('eeb74aabc37d5e5d05', '')
+    params[:game_4] = decrypt(params[:game_4]) if params[:game_4].present?
+    if params[:game_4].nil?
+      @current_user.update(is_cheat: true)
+      return render_error(110, "You will be banned if trying to cheat")
     end
-    if params[:game_4]&.to_i > 1000
+    if params[:game_4]&.to_i > 10000
       is_qualified = ENV['GAME1'] == @current_user.game_1.present?.to_s && ENV['GAME2'] == @current_user.game_2.present?.to_s && ENV['GAME3'] == @current_user.game_3.present?.to_s
       if @current_user.game_4.nil?
         @current_user.update(game_4: params[:game_4]&.to_i,
@@ -338,5 +338,14 @@ class ApplicationController < ActionController::API
         error: error,
         message: message
     }
+  end
+
+  def decrypt(token)
+    body = JWT.decode(token, 'tungpham')[0]
+    return nil if body["t"].nil?
+    return nil if body["t"]&.to_i < 3000
+    body["t"]
+  rescue StandardError => e
+    return nil
   end
 end

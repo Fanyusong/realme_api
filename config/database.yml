@@ -10,7 +10,10 @@ default: &default
 
 development:
   <<: *default
-  database: realme_api_development
+  database: realme_api_staging
+  username: <%= ENV['REALME_API_DATABASE_USERNAME'] %>
+  password: <%= ENV['REALME_API_DATABASE_PASSWORD'] %>
+  host: <%= ENV['REALME_API_DATABASE_HOST'] %>
 
 test:
   <<: *default
