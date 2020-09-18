@@ -199,33 +199,29 @@ class ApplicationController < ActionController::API
       @current_user.update(is_cheat: true)
       return render_error(110, "You will be banned if trying to cheat")
     end
-    if params[:game_4]&.to_i > 10000
-      is_qualified = ENV['GAME1'] == @current_user.game_1.present?.to_s && ENV['GAME2'] == @current_user.game_2.present?.to_s && ENV['GAME3'] == @current_user.game_3.present?.to_s
-      if @current_user.game_4.nil?
+    is_qualified = ENV['GAME1'] == @current_user.game_1.present?.to_s && ENV['GAME2'] == @current_user.game_2.present?.to_s && ENV['GAME3'] == @current_user.game_3.present?.to_s
+    if @current_user.game_4.nil?
+      @current_user.update(game_4: params[:game_4]&.to_i,
+                           prev_game_4: params[:game_4]&.to_i,
+                           total_time: @current_user.total_time + params[:game_4]&.to_i - @current_user.prev_game_4,
+                           current_total_time: @current_user.current_total_time + params[:game_4]&.to_i,
+                           is_qualified: is_qualified,
+                           game_4_lives: @current_user.game_4_lives - 1)
+    else
+      is_update = params[:game_4]&.to_i < @current_user.prev_game_4
+      if is_update
         @current_user.update(game_4: params[:game_4]&.to_i,
                              prev_game_4: params[:game_4]&.to_i,
                              total_time: @current_user.total_time + params[:game_4]&.to_i - @current_user.prev_game_4,
-                             current_total_time: @current_user.current_total_time + params[:game_4]&.to_i,
+                             current_total_time: @current_user.current_total_time + params[:game_4]&.to_i - @current_user.prev_game_4,
                              is_qualified: is_qualified,
                              game_4_lives: @current_user.game_4_lives - 1)
       else
-        is_update = params[:game_4]&.to_i < @current_user.prev_game_4
-        if is_update
-          @current_user.update(game_4: params[:game_4]&.to_i,
-                               prev_game_4: params[:game_4]&.to_i,
-                               total_time: @current_user.total_time + params[:game_4]&.to_i - @current_user.prev_game_4,
-                               current_total_time: @current_user.current_total_time + params[:game_4]&.to_i - @current_user.prev_game_4,
-                               is_qualified: is_qualified,
-                               game_4_lives: @current_user.game_4_lives - 1)
-        else
-          @current_user.update(game_4_lives: @current_user.game_4_lives - 1, is_qualified: is_qualified)
-        end
+        @current_user.update(game_4_lives: @current_user.game_4_lives - 1, is_qualified: is_qualified)
       end
-      @current_user.reload
-      render_success
-    else
-      render_error 110, "Your game params is not correct!"
     end
+    @current_user.reload
+    render_success
   end
 
   def top_gamers
