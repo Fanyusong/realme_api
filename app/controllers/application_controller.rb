@@ -224,7 +224,7 @@ class ApplicationController < ActionController::API
       else
         @current_user.update(game_4_lives: @current_user.game_4_lives - 1, is_qualified: is_qualified)
       end
-      if params[:game_4][:result] && @current_user.best_game4 > params[:game_4][:t]&.to_i
+      if params[:game_4][:result] && (@current_user.best_game4.nil? || @current_user.best_game4 > params[:game_4][:t]&.to_i)
         @current_user.update(best_game4: params[:game_4][:t], is_pass_game4: params[:game_4][:result])
       end
     end
