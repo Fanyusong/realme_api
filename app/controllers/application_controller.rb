@@ -209,7 +209,7 @@ class ApplicationController < ActionController::API
                            game_4_lives: @current_user.game_4_lives - 1,
                            is_pass_game4: params[:game_4][:result])
     else
-      is_update = params[:game_4]&.to_i < @current_user.prev_game_4
+      is_update = params[:game_4][:t]&.to_i < @current_user.prev_game_4
       if is_update
         @current_user.update(game_4: params[:game_4][:t]&.to_i,
                              prev_game_4: params[:game_4][:t]&.to_i,
