@@ -194,28 +194,30 @@ class ApplicationController < ActionController::API
 
   def game_4
     return render_error(107, "Your lives in game 4 is 0") unless @current_user.game_4_lives > 0
-    params[:game_4] = decrypt(params[:game_4]) if params[:game_4].present?
+    params[:game_4] = decrypt_game4(params[:game_4]) if params[:game_4].present?
     if params[:game_4].nil?
       @current_user.update(is_cheat: true)
       return render_error(110, "You will be banned if trying to cheat")
     end
     is_qualified = ENV['GAME1'] == @current_user.game_1.present?.to_s && ENV['GAME2'] == @current_user.game_2.present?.to_s && ENV['GAME3'] == @current_user.game_3.present?.to_s
     if @current_user.game_4.nil?
-      @current_user.update(game_4: params[:game_4]&.to_i,
-                           prev_game_4: params[:game_4]&.to_i,
-                           total_time: @current_user.total_time + params[:game_4]&.to_i - @current_user.prev_game_4,
-                           current_total_time: @current_user.current_total_time + params[:game_4]&.to_i,
+      @current_user.update(game_4: params[:game_4][:t]&.to_i,
+                           prev_game_4: params[:game_4][:t]&.to_i,
+                           total_time: @current_user.total_time + params[:game_4][:t]&.to_i - @current_user.prev_game_4,
+                           current_total_time: @current_user.current_total_time + params[:game_4][:t]&.to_i,
                            is_qualified: is_qualified,
-                           game_4_lives: @current_user.game_4_lives - 1)
+                           game_4_lives: @current_user.game_4_lives - 1,
+                           is_pass_game4: params[:game_4][:result])
     else
       is_update = params[:game_4]&.to_i < @current_user.prev_game_4
       if is_update
-        @current_user.update(game_4: params[:game_4]&.to_i,
-                             prev_game_4: params[:game_4]&.to_i,
-                             total_time: @current_user.total_time + params[:game_4]&.to_i - @current_user.prev_game_4,
-                             current_total_time: @current_user.current_total_time + params[:game_4]&.to_i - @current_user.prev_game_4,
+        @current_user.update(game_4: params[:game_4][:t]&.to_i,
+                             prev_game_4: params[:game_4][:t]&.to_i,
+                             total_time: @current_user.total_time + params[:game_4][:t]&.to_i - @current_user.prev_game_4,
+                             current_total_time: @current_user.current_total_time + params[:game_4][:t]&.to_i - @current_user.prev_game_4,
                              is_qualified: is_qualified,
-                             game_4_lives: @current_user.game_4_lives - 1)
+                             game_4_lives: @current_user.game_4_lives - 1,
+                             is_pass_game4: params[:game_4][:result])
       else
         @current_user.update(game_4_lives: @current_user.game_4_lives - 1, is_qualified: is_qualified)
       end
@@ -341,6 +343,14 @@ class ApplicationController < ActionController::API
     return nil if body["t"].nil?
     return nil if body["t"]&.to_i < 3000
     body["t"]
+  rescue StandardError => e
+    return nil
+  end
+
+  def decrypt_game4(token)
+    body = JWT.decode(token, 'tungpham')[0]
+    return nil if body["t"].nil? || body["result"].nil?
+    {t: body["t"], result: body["result"]}
   rescue StandardError => e
     return nil
   end
