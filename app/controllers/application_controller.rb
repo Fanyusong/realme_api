@@ -203,8 +203,6 @@ class ApplicationController < ActionController::API
     if @current_user.game_4.nil?
       @current_user.update(game_4: params[:game_4][:t]&.to_i,
                            prev_game_4: params[:game_4][:t]&.to_i,
-                           total_time: @current_user.total_time + params[:game_4][:t]&.to_i - @current_user.prev_game_4,
-                           current_total_time: @current_user.current_total_time + params[:game_4][:t]&.to_i,
                            is_qualified: is_qualified,
                            game_4_lives: @current_user.game_4_lives - 1,
                            is_pass_game4: params[:game_4][:result])
@@ -216,8 +214,6 @@ class ApplicationController < ActionController::API
       if is_update
         @current_user.update(game_4: params[:game_4][:t]&.to_i,
                              prev_game_4: params[:game_4][:t]&.to_i,
-                             total_time: @current_user.total_time + params[:game_4][:t]&.to_i - @current_user.prev_game_4,
-                             current_total_time: @current_user.current_total_time + params[:game_4][:t]&.to_i - @current_user.prev_game_4,
                              is_qualified: is_qualified,
                              game_4_lives: @current_user.game_4_lives - 1,
                              is_pass_game4: params[:game_4][:result])
