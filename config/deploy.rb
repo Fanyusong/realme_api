@@ -60,9 +60,9 @@ namespace :deploy do
       database = File.join(File.dirname(__FILE__), 'database.yml')
       config_path = File.join(File.dirname(__FILE__), 'config.yml')
       master_key_path = File.join(File.dirname(__FILE__), 'master.key')
-      nginx_conf_path = File.join(File.dirname(__FILE__), 'nginx.prod.conf')
+      # nginx_conf_path = File.join(File.dirname(__FILE__), 'nginx.prod.conf')
       nginx_dev_conf_path = File.join(File.dirname(__FILE__), 'nginx.dev.conf')
-      upload! nginx_conf_path, "#{shared_path}/config/nginx.prod.conf"
+      # upload! nginx_conf_path, "#{shared_path}/config/nginx.prod.conf"
       upload! nginx_dev_conf_path, "#{shared_path}/config/nginx.dev.conf"
       upload! config_path, "#{shared_path}/config/config.yml"
       upload! database, "#{shared_path}/config/database.yml"
